@@ -1,0 +1,12 @@
+<div class="form-group row">
+  <label for="{{name}}-radio" class="col-4 col-form-label">{{displayName}}</label>
+  <div class="col-8" id="{{name}}-radio">
+    {% for value in option %}
+      <div class="form-check form-check-inline">
+        <label class="form-check-label">
+          <input class="form-check-input" type="radio" name="{{name}}" value="{{value}}" {% if required == 'true' %}required{% else %}{% endif %}> {{value}}
+        </label>
+      </div>
+    {% endfor %}
+  </div>
+</div>
