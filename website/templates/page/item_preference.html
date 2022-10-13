@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container-narrow text-center p-4">
+  <h4>{{item_selection_question}}<b>{{ item.display_name }}</b>?</h4>
+  <div class="col-xl-12 p-4 text-center">
+    <img id="left-image" src= {{ url_for('static', filename = 'image/' + item.image_path|string) }} class="img-responsive pt-2" style="width:80%;max-width:600px; height:80%;max-height:600px;">  
+  </div>
+  <div class="p-2">
+    <form method = "POST">
+      <div class="form-group">
+        <input type="hidden" id="item_id" name="item_id" value="{{item.id}}">
+        <div class="col-xl-12 text-center">
+          <button type="submit" name='action' value='agree' style="width:200px;margin:5px" class="btn btn-success btn-lg submit">{{item_selection_answer_yes}}</input>
+          <button type="submit" name='action' value='disagree' style="width:200px;margin:5px" class="btn btn-danger btn-lg submit">{{item_selection_answer_no}}</input>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
