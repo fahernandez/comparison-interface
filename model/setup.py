@@ -3,7 +3,7 @@ from sqlalchemy import Integer, String, MetaData
 from migrate.versioning.schema import Table, Column
 # Custom libraries
 from model.connection import db, persist
-from model.schema import Group, Item, WebsiteControlHistory, User
+from model.schema import Group, Item, WebsiteControl, CustomItemPair
 from configuration.website import Setup as WebSiteSetup
 
 class Setup:
@@ -23,6 +23,7 @@ class Setup:
 
             # The session needs be commited after creationg the groups.
             self.__setup_group(db, config)
+            self.__setup_website_control_history(db, config)
             db.session.commit()
             
             # The setup of the user configuration doesn't use SQLAlquemy ORM
@@ -37,14 +38,50 @@ class Setup:
         """
         for g in config[WebSiteSetup.COMPARISON_CONFIGURATION][WebSiteSetup.GROUPS]:
             group = Group(
-                weight_configuration=g[WebSiteSetup.GROUP_WEIGHT_CONFIGURATION], 
                 name=g[WebSiteSetup.GROUP_NAME],
                 display_name=g[WebSiteSetup.GROUP_DISPLAY_NAME]
             )
             group = persist(db, group)
-            self.__setup_item(db, group, g)
+            # Setup the items and their weights
+            items = self.__setup_item(db, group, g)
+            self.__setup_custom_item_pair(db, config, items, group, g)
 
-        self.__setup_website_control_history(db)
+
+    def __setup_custom_item_pair(self, db, config, items, group, g):
+        """Save the custom item's weight configuration went defined manually using
+        the Website configuration file. If the web configuration type was "equal",
+        this section will be ignored. 
+
+        Args:
+            db (SQLAlquemy): Database connection
+            config (Json): Website configuration object.
+            items (array(Item)): Group items store in the database.
+            group (Group): Group store in the database.
+            g (json): Group configuration being saved.
+        """
+        weight_configuration = config[WebSiteSetup.COMPARISON_CONFIGURATION][WebSiteSetup.WEBSITE_WEIGHT_CONFIGURATION]
+
+        # Ignore this section when defining equally weighted items
+        if weight_configuration == WebsiteControl.EQUAL_WEIGHT:
+            return
+        
+        # Save the custom weights configuration
+        if weight_configuration == WebsiteControl.CUSTOM_WEIGHT:
+            weights = g[WebSiteSetup.GROUP_ITEMS_WEIGHT]
+        
+            items_dict = {}
+            for i in items:
+                items_dict[i.name] = int(i.id)
+
+            for w in weights:
+                c = CustomItemPair()
+                c.item_1_id = items_dict[w["item_1"]]
+                c.item_2_id = items_dict[w["item_2"]]
+                c.group_id = group.id
+                c.weight = w["weight"]
+                db.session.add(c)
+                
+        return
 
     def __setup_item(self, db, group, g):
         """Save the item configuration in the database.
@@ -54,25 +91,19 @@ class Setup:
             group (SQLAlquemy): Inserted group object.
             g (Json): Group configuration object on the global website configuration.
         """
-        item_weight = None
-
-        if g[WebSiteSetup.GROUP_WEIGHT_CONFIGURATION] == Group.EQUAL:
-            item_weight = 1/len(g[WebSiteSetup.GROUP_ITEMS])
-
         # Insert each of the items related to the groups
-        for i in g[WebSiteSetup.GROUP_ITEMS]: 
-            if g[WebSiteSetup.GROUP_WEIGHT_CONFIGURATION] == Group.MANUAL:
-                item_weight = i[WebSiteSetup.ITEM_WEIGHT]
-                
+        items = []
+        for i in g[WebSiteSetup.GROUP_ITEMS]:                 
             item = Item(
                 group_id=group.id,
-                weight=item_weight,
                 name=i[WebSiteSetup.ITEM_NAME],
                 display_name=i[WebSiteSetup.ITEM_DISPLAY_NAME],
                 image_path=i[WebSiteSetup.ITEM_IMAGE_NAME]
             )
             
-            item = persist(db, item)
+            items.append(persist(db, item))
+
+        return items
             
     def __setup_user(self, db, config):
         """Save the user configuration in the database. User fields are dynamically configured
@@ -108,14 +139,16 @@ class Setup:
             # Insert the new column
             col.create(table)
             
-    def __setup_website_control_history(self, db):
+    def __setup_website_control_history(self, db, config):
         """The control history helps to keep control of changes on the Website configuration.
         After the project has been set up, it's not allowed changing the website configuration file.
         Changes on this file will block the website execution.
         A new setup will be neccesary and the database information will be reset.
 
         Args:
-            db (SQLAlquemy): Database connection
+            db (SQLAlquemy): Database connection,
+            config (Json): Website configuration object.
         """
-        hist = WebsiteControlHistory()
+        hist = WebsiteControl()
+        hist.weight_configuration = config[WebSiteSetup.COMPARISON_CONFIGURATION][WebSiteSetup.WEBSITE_WEIGHT_CONFIGURATION]
         db.session.add(hist)

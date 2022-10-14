@@ -1,10 +1,10 @@
 {
     "comparisonConfiguration" : {
+        "weightConfiguration": "equal",
         "groups": [
             {
-                "name": "uk",
-                "displayName": "United Kingdom",
-                "weightConfiguration": "equal",
+                "name": "england",
+                "displayName": "England",
                 "items":[
                     {
                         "name": "north_east",
@@ -50,7 +50,13 @@
                         "name": "south_west",
                         "displayName": "South West",
                         "imageName": "item_9.png"
-                    },
+                    }
+                ] 
+            },
+            {
+                "name": "wales_scotland_northern_irland",
+                "displayName": "Wales, Scotland, Nothern Ireland",
+                "items":[
                     {
                         "name": "wales",
                         "displayName": "Wales",
@@ -65,67 +71,6 @@
                         "name": "northern_ireland",
                         "displayName": "Northern Ireland",
                         "imageName": "item_12.png"
-                    }
-                ] 
-            },
-            {
-                "name": "england_only",
-                "displayName": "England only",
-                "weightConfiguration": "manual",
-                "items":[
-                    {
-                        "name": "north_east",
-                        "displayName": "North East",
-                        "imageName": "item_1.png",
-                        "weight": 0.088 
-                    },
-                    {
-                        "name": "north_west",
-                        "displayName": "North West",
-                        "imageName": "item_2.png",
-                        "weight": 0.088
-                    },
-                    {
-                        "name": "yorshire",
-                        "displayName": "Yorshire & Humberside",
-                        "imageName": "item_3.png",
-                        "weight": 0.088
-                    },
-                    {
-                        "name": "east_midlands",
-                        "displayName": "East Midlands",
-                        "imageName": "item_4.png",
-                        "weight": 0.088
-                    },
-                    {
-                        "name": "west_midlands",
-                        "displayName": "West Midlands",
-                        "imageName": "item_5.png",
-                        "weight": 0.088
-                    },
-                    {
-                        "name": "eastern",
-                        "displayName": "Eastern",
-                        "imageName": "item_6.png",
-                        "weight": 0.088
-                    },
-                    {
-                        "name": "london",
-                        "displayName": "London",
-                        "imageName": "item_7.png",
-                        "weight": 0.296
-                    },
-                    {
-                        "name": "south_east",
-                        "displayName": "South East",
-                        "imageName": "item_8.png",
-                        "weight": 0.088
-                    },
-                    {
-                        "name": "south_west",
-                        "displayName": "South West",
-                        "imageName": "item_9.png",
-                        "weight": 0.088
                     }
                 ] 
             }
@@ -156,13 +101,6 @@
                 "required": "true"
             },
             {
-                "name": "last_name",
-                "displayName": "Last Name",
-                "type": "text",
-                "maxLimit": 250,
-                "required": "true"
-            },
-            {
                 "name": "gender",
                 "displayName": "Gender",
                 "type": "radio",
@@ -175,13 +113,6 @@
                 "type": "int",
                 "maxLimit": 250,
                 "minLimit": "10",
-                "required": "true"
-            },
-            {
-                "name": "occupation",
-                "displayName": "Occupation",
-                "type": "text",
-                "maxLimit": 250,
                 "required": "true"
             },
             {

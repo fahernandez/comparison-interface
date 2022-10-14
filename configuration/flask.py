@@ -3,7 +3,7 @@
 
 class Settings(object):
     SECRET_KEY = 'jsd21@hGH11' # Change by your own secret key
-    CONFIG_TYPE = 'Development'
+    CONFIG_TYPE = 'development'
     WEBSITE_TITLE = 'Comparative Judgement'
     WEBSITE_ADMINISTRATOR = 'Site Administrator Name.'
     WEBSITE_ADMINISTRATOR_EMAIL = 'admin@admin.com'
@@ -11,4 +11,9 @@ class Settings(object):
     SQLALCHEMY_DATABASE_URI='sqlite:///../model/database.db'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SEND_FILE_MAX_AGE_DEFAULT = 10
-    WEBSITE_SETUP_LOCATION = 'configuration/website.json'
+    WEBSITE_SETUP_LOCATION = 'configuration/website-example-1.json'
+    #WEBSITE_SETUP_LOCATION = 'configuration/website-example-2.json'
+    RENDER_USER_ITEM_PREFERENCE = False
+    
+    # export FLASK_ENV=development;
+    # export FLASK_APP=website;

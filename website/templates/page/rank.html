@@ -50,6 +50,7 @@
 <div class="container-fluid">
   <form method = "POST">
     <input type="hidden" id="selected_item_id" name="selected_item_id" value="">
+    <input type="hidden" id="comparison_id" name="comparison_id" value="{% if comparison_id %}{{comparison_id}}{% else %}""{% endif %}">
     <div class="form-group">
       <div class="text-center">
            <!-- only desktop -->
@@ -61,48 +62,48 @@
         <div class="col p-2">
           <div class="text-center">
             <h4>
-              <b>{{ r1.display_name }}</b>
+              <b>{{ item_1.display_name }}</b>
             </h4>
           </div>
           <div class="text-center">
-            <input type="hidden" id="item_1_id" name="item_1_id" value={{ r1.id }}>
-            <img id="left-image" data-item_id={{ r1.id }} src= {{ url_for('static', filename = 'image/' + r1.image_path|string) }} class="img-responsive img-contraint">
+            <input type="hidden" id="item_1_id" name="item_1_id" value={{ item_1.id }}>
+            <img id="left-image" data-item_id={{ item_1.id }} src= {{ url_for('static', filename = 'image/' + item_1.image_path|string) }} class="img-responsive img-contraint">
           </div>
         </div>
         <div class="col p-2">
           <div class="text-center">
             <h4>
-              <b>{{ r2.display_name }}</b>
+              <b>{{ item_2.display_name }}</b>
             </h4>
           </div>
           <div class="text-center">
-            <input type="hidden" id="item_2_id" name="item_2_id" value={{ r2.id }}>
-            <img id="right-image" data-item_id={{ r2.id }} src= {{ url_for('static', filename = 'image/' + r2.image_path|string) }} class="img-responsive img-contraint">
+            <input type="hidden" id="item_2_id" name="item_2_id" value={{ item_2.id }}>
+            <img id="right-image" data-item_id={{ item_2.id }} src= {{ url_for('static', filename = 'image/' + item_2.image_path|string) }} class="img-responsive img-contraint">
           </div>
           </div>
       </div>
       <!-- only desktop -->
       <div class="d-none d-md-block d-lg-block d-xl-block row pl-2 pr-2">
         <div class="control-block col p-2 text-left">
-          <button id="previous-button" type="submit" name='state' value='{{rejudge_value}}' style="width:200px" class="btn btn-lg btn-secondary disabled" disabled>{{rejudge_label}}</a>
+          <button id="previous-button" type="submit" name='state' value='{{rejudge_value}}' style="width:200px" class="btn btn-lg btn-secondary {% if can_redjudge %}{% else %}disabled{% endif %}" {% if can_redjudge %}{% else %}disabled{% endif %}>{{rejudge_label}}</button>
         </div>
         <div class="control-block col p-2 text-center">
           <button id="confirm-button-d" type="submit" name='state' value='{{compared_value}}' style="width:200px" class="btn btn-lg btn-primary disabled" disabled>{{compared_label}}</button>
         </div>
         <div class="control-block col p-2 text-right">
-          <button id="skip-button" type="submit" name='state' value='{{skipped_value}}' style="width:200px" class="btn btn-lg btn-secondary">{{skipped_label}}</a>
+          <button id="skip-button" type="submit" name='state' value='{{skipped_value}}' style="width:200px" class="btn btn-lg btn-secondary">{{skipped_label}}</button>
         </div>
       </div>
       <!-- only mobile -->
       <div class="d-block d-md-none d-lg-none d-xl-none row pl-2 pr-2 fix-control-mobile">
         <div class="control-block col p-2 text-left">
-          <button id="previous-button" type="submit" name='state' value='{{rejudge_value}}' style="min-width:100px" class="btn btn-lg btn-secondary disabled" disabled>{{rejudge_label}}</a>
+          <button id="previous-button" type="submit" name='state' value='{{rejudge_value}}' style="min-width:100px" class="btn btn-lg btn-secondary {% if can_redjudge %}{% else %}disabled{% endif %}" {% if can_redjudge %}{% else %}disabled{% endif %}>{{rejudge_label}}</button>
         </div>
         <div class="control-block col p-2 text-center">
           <button id="confirm-button-m" type="submit" name='state' value='{{compared_value}}' style="min-width:100px" class="btn btn-lg btn-primary disabled" disabled>{{compared_label}}</button>
         </div>
         <div class="control-block col p-2 text-right">
-          <button id="skip-button" type="submit" name='state' value='{{skipped_value}}' style="min-width:100px" class="btn btn-lg btn-secondary">{{skipped_label}}</a>
+          <button id="skip-button" type="submit" name='state' value='{{skipped_value}}' style="min-width:100px" class="btn btn-lg btn-secondary">{{skipped_label}}</button>
         </div>
       </div>
     </div>

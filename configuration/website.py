@@ -4,18 +4,18 @@ class Setup:
     # Group related configuration keys
     COMPARISON_CONFIGURATION = 'comparisonConfiguration'
     GROUPS = 'groups'
-    GROUP_WEIGHT_CONFIGURATION = 'weightConfiguration'
     GROUP_NAME = 'name'
     GROUP_DISPLAY_NAME = 'displayName'
     GROUP_ITEMS = 'items'
+    GROUP_ITEMS_WEIGHT = 'weight'
     # Items related configuration keys
     ITEM_NAME = 'name'
     ITEM_GROUP_ID = 'group_id'
     ITEM_DISPLAY_NAME = 'displayName'
     ITEM_IMAGE_NAME = 'imageName'
-    ITEM_WEIGHT = 'weight'
     # Website configuration
     WEBSITE_CONFIGURATION = 'websiteConfiguration'
+    WEBSITE_WEIGHT_CONFIGURATION = 'weightConfiguration'
     WEBSITE_LABEL = 'label'
     WEBSITE_USER_FIELDS = 'userFields'
     # User fields

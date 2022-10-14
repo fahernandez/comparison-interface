@@ -10,7 +10,7 @@ from datetime import datetime as dt
 from configuration.flask import Settings
 from configuration.website import Setup as WebSiteSetup
 from model.connection import db
-from model.schema import WebsiteControlHistory
+from model.schema import WebsiteControl
 from website import command, view
 
 def create_app(test_config=None):
@@ -54,9 +54,11 @@ def validate_app_itegrity():
     app = current_app
     with app.app_context():
         # Get the date when the setup was executed
-        w = WebsiteControlHistory.query.order_by(WebsiteControlHistory.id.desc()).first()
-        setup_exec_date = w.setup_exec_date
+        w = WebsiteControl()
+        conf = w.get_conf()
+        setup_exec_date = conf.setup_exec_date
         config_modification_date = None
+
         try:
             # Get the last modification date of the configuration file (UTC)
             config_modification_date = os.path.getmtime(Settings.WEBSITE_SETUP_LOCATION)

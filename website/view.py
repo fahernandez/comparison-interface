@@ -5,12 +5,13 @@ from flask import (Blueprint, redirect, render_template, request, session,
 from sqlalchemy import MetaData
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.sql.expression import func
+from sqlalchemy.orm import aliased
 import datetime
 from numpy.random import choice
 
 # Custom libraries
 from model.connection import db
-from model.schema import User, Group, UserItem, Item, Comparison
+from model.schema import User, Group, UserItem, Item, Comparison, WebsiteControl, UserGroup, CustomItemPair
 from configuration.website import Setup as WebSiteSetup
 
 blueprint = Blueprint('views', __name__)
@@ -46,11 +47,17 @@ def register_user():
             component = 'component/{}.html'.format(field[WebSiteSetup.USER_FIELD_TYPE])
             user_components.append(render_template(component, **field))
         
+        # Allow multiple item selection only the weight distribution is "equal"
+        multiple_selection = False
+        if WebsiteControl().get_conf().weight_configuration == WebsiteControl.EQUAL_WEIGHT:
+            multiple_selection = True
+
         # Add the group component
         groups = Group.query.all()
         user_components.append(render_template('component/group.html', **{
             'groups':groups,
-            'label': labels[WebSiteSetup.LABEL_GROUP_QUESTION]
+            'label': labels[WebSiteSetup.LABEL_GROUP_QUESTION],
+            'multiple_selection': multiple_selection
         }))
 
         # Render the whole template
@@ -61,6 +68,14 @@ def register_user():
         },**__get_layout_labels(labels)})
 
     if request.method == 'POST':
+        # Remove the group id from the request.
+        # This field is not related to the user model
+        dic_user_attr = request.form.to_dict(flat=True)
+        dic_user_attr.pop('group_ids', None)
+
+        # Multiple group ids can be selected by the user
+        group_ids = request.form.to_dict(flat=False)['group_ids']
+
         # Register the user in the database.
         # Some of the user fields were dynamically added so we are using SQLAlquemy
         # reflection functionality to insert them.
@@ -68,24 +83,35 @@ def register_user():
         db_meta = MetaData()
         db_meta.reflect(bind=db_engine)
         table = db_meta.tables["user"]
-        attr = request.form.to_dict(flat=True)
-        attr['created_date'] = datetime.datetime.now(datetime.timezone.utc)
-        new_user_sql = table.insert().values(**attr)
-        
+        dic_user_attr['created_date'] = datetime.datetime.now(datetime.timezone.utc)
+        new_user_sql = table.insert().values(**dic_user_attr)
         try:
             # Insert the user into the database
             result = db.engine.execute(new_user_sql)
             # Get last inserted id
             id = result.lastrowid
             user = db.session.query(User).filter(User.id == id).first()
+            
+            # Save the user's group preferences
+            for id in group_ids:
+                ug = UserGroup()
+                ug.group_id = id
+                ug.user_id = user.id
+                
+                db.session.add(ug)
+                db.session.commit()
+
             # Save reference to the inserted values in the session
             session['user_id'] = user.id
-            session['group_id'] = user.group_id
-            
+            session['group_ids'] = group_ids
+            session['weight_conf'] = WebsiteControl().get_conf().weight_configuration
+            session['previous_comparison_id'] = None
+            session['comparison_ids'] = []
+        
             return redirect(url_for('.item_selection'))
 
         except SQLAlchemyError as e:
-            raise RuntimeError(str(e.__dict__['orig']))
+            raise RuntimeError(str(e))
 
     raise RuntimeError("Method not implemented")
 
@@ -105,10 +131,18 @@ def item_selection():
     if response:
         return response
     
+    # The item selection won't be allow if:
+    # 1. Manual weights were defined.
+    # 2. The user explicitly configured the website to not render this section.
+    if not session['weight_conf'] == WebsiteControl.EQUAL_WEIGHT or \
+        not current_app.config['RENDER_USER_ITEM_PREFERENCE']:
+        return redirect(url_for('.rank'))
+    
     if request.method == 'GET':
         # Get all items preferences not specified for the user yet.
-        result = db.session.query(User, Item, UserItem).\
-            join(Item, User.group_id == Item.group_id, isouter = True).\
+        result = db.session.query(User, UserGroup, Item, UserItem).\
+            join(UserGroup, UserGroup.user_id == User.id, isouter = True).\
+            join(Item, UserGroup.group_id == Item.group_id, isouter = True).\
             join(
                 UserItem,
                 (UserItem.user_id == User.id) & (UserItem.item_id == Item.id), 
@@ -116,7 +150,7 @@ def item_selection():
             ).\
             where(
                 User.id == session['user_id'], 
-                User.group_id == session['group_id'],
+                UserGroup.group_id.in_(session['group_ids']),
                 UserItem.id == None
             ).order_by(func.random()).\
             first()
@@ -126,7 +160,7 @@ def item_selection():
         if not result:
             return redirect(url_for('.rank'))
 
-        _, item, _ = result
+        _, _ ,item, _ = result
         # Load the configuration
         s = WebSiteSetup(current_app)
         conf = s.load()
@@ -157,7 +191,7 @@ def item_selection():
             db.session.add(ui)
             db.session.commit()
         except SQLAlchemyError as e:
-            raise RuntimeError(str(e.__dict__['orig']))
+            raise RuntimeError(str(e))
 
 
         return redirect(url_for('.item_selection'))
@@ -166,7 +200,7 @@ def item_selection():
 
 
 @blueprint.route('/rank', methods=['GET', 'POST'])
-def rank(comparison_id=None):
+def rank():
     response = __validate_session(session)
     if response:
         return response
@@ -178,70 +212,36 @@ def rank(comparison_id=None):
     # Load form labels
     labels = conf[WebSiteSetup.WEBSITE_CONFIGURATION][WebSiteSetup.WEBSITE_LABEL]
 
-    if request.method == 'GET' and not 'items' in session:
-        # Get all know items for the user
-        result = db.session.query(User, Item, UserItem, Group).\
-            join(Item, User.group_id == Item.group_id, isouter = True).\
-            join(Group, User.group_id == Group.id, isouter = True).\
-            join(
-                UserItem,
-                (UserItem.user_id == User.id) & (UserItem.item_id == Item.id), 
-                isouter = True
-            ).\
-            where(
-                User.id == session['user_id'], 
-                User.group_id == session['group_id'],
-                UserItem.known == 1
-            ).all()
-        
+    # Get the items used to make the comparative judgement
+    if request.method == 'GET':
+        comparison_id = None
+        args = request.args.to_dict(flat=True)
+        if 'comparison_id' in args:
+            comparison_id = args['comparison_id']
+
+        item_1, item_2 = __get_items_to_compare(comparison_id)
         # Show a "no content error" in case of not enought selected known items.
-        if not result or len(result) == 1:
+        if item_1 == None or item_2 == None:
             return render_template(
                 '204.html', **__get_layout_labels(labels)
             )
-
-        items = []
-        group  = None
-        for _, i, _, g in result:
-            items.append(i)
-            group = g
-
-        # Calibrate the weights used while selecting the items
-        items, ids, weights = __calibrate_weight(items, group)
-        
-        # Save the items used to make the comparative judgment
-        session['items'] = items
-        session['items_ids'] = ids
-        session['items_weights'] = weights
-        session['previous_comparison_id'] = None
-        session['actual_comparison_id'] = None
-        session['comparison_ids'] = []
-    
-    # Get the items used to make the comparative judgement
-    if request.method == 'GET' and 'items' in session:
-        res = choice(
-            session['items_ids'],
-            2,
-            p=session['items_weights'],
-            replace=False
-        )
 
         # Load the configuration
         s = WebSiteSetup(current_app)
         conf = s.load()
         
-        # The redjudge buttom will be shown if:
+        # The user can rejudge comparisons made if:
         # 1. Some comparison has been made.
         # 2. There is previous comparison to be made.
-        render_redjudge_buttom = len(session['comparison_ids']) > 0 \
-            and session['actual_comparison_id'] != None
+        can_redjudge = len(session['comparison_ids']) > 0 \
+            and session['previous_comparison_id'] != None
 
         # Load form labels
         labels = conf[WebSiteSetup.WEBSITE_CONFIGURATION][WebSiteSetup.WEBSITE_LABEL]
         return render_template(
             'page/rank.html', **{**{
-            'r1':session['items'][str(res[0])], 
-            'r2':session['items'][str(res[1])],
+            'item_1':item_1, 
+            'item_2':item_2,
             'selected_item_label': labels[WebSiteSetup.LABEL_ITEM_SELECTED],
             'instruction_label': labels[WebSiteSetup.LABEL_ITEM_INSTRUCTION],
             'rejudge_label': labels[WebSiteSetup.LABEL_ITEM_REJUDGE],
@@ -251,41 +251,64 @@ def rank(comparison_id=None):
             'rejudge_value': Comparison.REJUDGE,
             'compared_value': Comparison.COMPARED,
             'skipped_value': Comparison.SKIPPED,
-            'render_redjudge': render_redjudge_buttom
+            'can_redjudge': can_redjudge,
+            'comparison_id': comparison_id
             
         },**__get_layout_labels(labels)})
     
     if request.method == 'POST':
         response = request.form.to_dict(flat=True)
-        print(response)
         if response['state'] != Comparison.REJUDGE:
             selected_item_id = None
             if 'selected_item_id' in response and response['state'] == Comparison.COMPARED:
                 selected_item_id = response['selected_item_id']
 
-            # Save the user preference into the database
-            c = Comparison(
-                user_id = session['user_id'],
-                item_1_id = response['item_1_id'],
-                item_2_id = response['item_2_id'],
-                state = response['state'],
-                selected_item_id = selected_item_id
-            )
+            comparison_id = None
+            if 'comparison_id' in response and response['comparison_id'] != "":
+                comparison_id = response['comparison_id']
+                
+            if comparison_id == None:
+                # Save the new user comparison in the database.
+                c = Comparison(
+                    user_id = session['user_id'],
+                    item_1_id = response['item_1_id'],
+                    item_2_id = response['item_2_id'],
+                    state = response['state'],
+                    selected_item_id = selected_item_id
+                )
+                try:
+                    db.session.add(c)
+                    db.session.commit()
+                    # Save the comparison for future possible rejudging
+                    session['previous_comparison_id'] = c.id
+                    session['comparison_ids'] = session['comparison_ids'] + [c.id]
+                except SQLAlchemyError as e:
+                    raise RuntimeError(str(e))
+            else:
+                # Rejudge an existance comparison.
+                comparison = db.session.query(Comparison).\
+                    where(
+                        Comparison.id == comparison_id,
+                        Comparison.user_id == session['user_id']
+                    ).\
+                    first()
 
-            try:
-                db.session.add(c)
-                db.session.commit()
-                # Save the comparison. This for future rejudging
-                session['previous_comparison_id'] = session['actual_comparison_id']
-                session['actual_comparison_id'] = c.id
-                session['comparison_ids'] = session['comparison_ids'] + [c.id]
-            except SQLAlchemyError as e:
-                raise RuntimeError(str(e.__dict__['orig']))
-            
+                if comparison == None:
+                    raise RuntimeError("Invalid comparison id provided")
+                
+                try:
+                    comparison.selected_item_id = selected_item_id
+                    comparison.state = response['state']
+                    db.session.commit()
+                    # Return the pointer to the last comparasion made
+                    session['previous_comparison_id'] = session['comparison_ids'][len(session['comparison_ids'])-1]
+                except SQLAlchemyError as e:
+                    raise RuntimeError(str(e))
+        
             return redirect(url_for('.rank'))
     
         if response['state'] == Comparison.REJUDGE:
-            return redirect(url_for('.rank', comparison_id=None))
+            return redirect(url_for('.rank', comparison_id=session['previous_comparison_id']))
 
     raise RuntimeError("Method not implemented")
 
@@ -297,38 +320,131 @@ def logout():
     print(session.keys())
     return redirect(url_for('.register_user'))
 
-def __calibrate_weight(items, group):
-    """Calibrate items weight based on the user preferences. Weights are defined using
-    the website configuration file, but because of the user preferences, this initial
-    assigment could be needed to be changed. i.e the weigths assigment could be made taken 
-    into consideration n items, but because the user didn't know some of the items, this
-    number as reduced to n-m. This means that the initial weights needs to be adjusted to n-m.
+def __get_items_to_compare(comparison_id=None):
+    """Get the items to compare.
 
     Args:
-        items (array): items to be compared
-        group (Group): items grouped be used
+        comparison_id (int, optional): Gets the items related
+        to a particular comparison. This parameter allows
+        the rejudging functionality. Defaults to None.
+
+    Returns:
+        Item: Model Item | none
+        Item: Model Item | none
     """
-    items_len = len(items)
-    if group.weight_configuration == Group.EQUAL:
-        for i in items:
-           i.weight = 1/items_len
+    # Case 1: Returns the items related to a particular comparison.
+    if comparison_id != None:
+        # 1. Get the items related to the comparison.
+        comparison = db.session.query(Comparison).\
+            where(
+                Comparison.id == comparison_id,
+                Comparison.user_id == session['user_id']
+            ).\
+            first()
+            
+        if comparison == None:
+            raise RuntimeError("Invalid comparison id provided")
+         
+        # 2. Get the items information
+        items = db.session.query(Item).\
+            where(
+                Item.id.in_([comparison.item_1_id, comparison.item_2_id])
+            ).all()
+        
+        # 3. Update the session parameters
+        comparison_id_index = session['comparison_ids'].index(int(comparison_id))
+        if comparison_id_index == 0:
+            session['previous_comparison_id'] = None
+        else:
+            session['previous_comparison_id'] = session['comparison_ids'][comparison_id_index - 1]
+        
+        return items[0], items[1]
+
+    # Case 2: Get a random pair from list of custom defined weights
+    if session['weight_conf'] == WebsiteControl.CUSTOM_WEIGHT:
+        # 1. Get the the custom pairs 
+        result = db.session.query(UserGroup, CustomItemPair).\
+            join(CustomItemPair, CustomItemPair.group_id == UserGroup.group_id, isouter = True).\
+            where(
+                UserGroup.user_id == session['user_id'], 
+                UserGroup.group_id.in_(session['group_ids'])
+            ).all()
+        
+        if len(result) == 0:
+            return None, None
+
+        pair_ids = []
+        pair_weights = []
+        pairs = {}
+        for _, p in result:
+            pairs[p.id] = p
+            pair_ids.append(p.id)
+            pair_weights.append(p.weight)
+        
+        # 2. Select the item pair to compare but respecting the custom weights
+        pair_id = choice(pair_ids, 1, p=pair_weights, replace=False)
+        item_1_id = pairs[pair_id[0]].item_1_id
+        item_2_id = pairs[pair_id[0]].item_2_id
+
+        # 3. Get the items information
+        items = db.session.query(Item).\
+            where(
+                Item.id.in_([item_1_id, item_2_id])
+            ).all()
+            
+        return items[0], items[1]
     
-    if group.weight_configuration == Group.MANUAL:
-        # Possible cases
-        # 1. Just two items: equal weight
-        # 2. All items with same weight: equal weight.
-        # 3. Some items with biggest weight. recalibrate
-        ## TODO-Case 3 not implemented yet. 
-        for i in items:
-            i.weight = 1/items_len
+    # Case 3: Get a random item pair when equal weights and item preference was defined
+    if session['weight_conf'] == WebsiteControl.EQUAL_WEIGHT and \
+        current_app.config['RENDER_USER_ITEM_PREFERENCE']:
+        # 1. Get the know user items preferences 
+        result = db.session.query(UserItem, Item).\
+            join(Item, Item.id == UserItem.item_id, isouter = True).\
+            where(
+                UserGroup.user_id == session['user_id'],
+                UserItem.known == 1
+            ).all()
+        
+        if len(result) < 1:
+            return None, None
+        
+        items_id = []
+        items = {}
+        for _, i in result:
+            items_id.append(i.id)
+            items[i.id] = i
+        
+        # 2. Select randomly two items from the user's item preferences
+        selected_items_id = choice(items_id, 2, replace=False)
+        
+        return items[selected_items_id[0]], items[selected_items_id[1]] 
+            
+    # Case 4: Get a random item pair when equal weights and no item preference was defined
+    if session['weight_conf'] == WebsiteControl.EQUAL_WEIGHT and \
+        not current_app.config['RENDER_USER_ITEM_PREFERENCE']:
+        # 1. Get the items related to the user's group preferences
+        result = db.session.query(UserGroup, Item).\
+            join(Item, Item.group_id == UserGroup.group_id, isouter = True).\
+            where(
+                UserGroup.user_id == session['user_id'],
+                UserGroup.group_id.in_(session['group_ids'])
+            ).all()
+        
+        items_id = []
+        items = {}
+        for _, i in result:
+            items_id.append(i.id)
+            items[i.id] = i
+        
+        # 2. Select randomly two items using the user's group preferences
+        selected_items_id = choice(items_id, 2, replace=False)
+        
+        return items[selected_items_id[0]], items[selected_items_id[1]]
+    
+    # All no implemented cases
+    return None, None
+   
 
-    # Returns the parameters needed to get the items following the weight assigment
-    items.sort(key=lambda x: x.id, reverse=False)
-    weights = [i.weight for i in items]
-    id = [i.id for i in items]
-    items = dict((str(x.id), x.as_dict()) for x in items)
-
-    return items, id, weights
 
 def __validate_session(session):
     """Validate the user session integrity
@@ -337,7 +453,7 @@ def __validate_session(session):
         Response object: Redirect the user to the user registration secton
     """
 
-    if not "user_id" in session or not "group_id" in session:
+    if not "user_id" in session or not "group_ids" in session:
         return redirect(url_for('.register_user'))
     return None
 
