@@ -44,6 +44,8 @@ class Setup:
     LABEL_ITEM_SELECTED_LABEL = "itemSelectedIndicatorLabel"
     LABEL_ITEM_EQUAL_SELECTED_LABEL = "itemBothSelectedIndicatorLabel"
     LABEL_ITEM_INSTRUCTION  = "itemInstruction"
+    LABEL_COMPARISON_NUMBER  = "comparisonNumberLabel"
+    LABEL_SKIPPED_NUMBER  = "skippedNumberLabel"
     LABEL_ITEM_REJUDGE_BUTTON = "itemRejudgeButton"
     LABEL_ITEM_CONFIRMED_BUTTON = "itemConfirmedButton"
     LABEL_ITEM_SKIPPED_BUTTON = "itemSkippedButton"

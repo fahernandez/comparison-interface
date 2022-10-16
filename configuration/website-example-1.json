@@ -92,7 +92,9 @@
             "itemRejudgeButton": "Previous",
             "itemConfirmedButton": "Confirm",
             "itemSkippedButton": "Skip",
-            "itemInstruction": "Please click the bigger region. Then click on the Confirm blue button."
+            "itemInstruction": "Please click the bigger region. Then click on the Confirm blue button.",
+            "comparisonNumberLabel": "Compared: ",
+            "skippedNumberLabel": "Skipped: "
         },
         "userFields": [
             {

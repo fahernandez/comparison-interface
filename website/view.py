@@ -5,7 +5,6 @@ from flask import (Blueprint, redirect, render_template, request, session,
 from sqlalchemy import MetaData
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.sql.expression import func
-from sqlalchemy.orm import aliased
 import datetime
 from numpy.random import choice
 
@@ -240,6 +239,8 @@ def rank():
         # 2. There is previous comparison to be made.
         can_redjudge = len(session['comparison_ids']) > 0 \
             and session['previous_comparison_id'] != None
+            
+        compared, skipped = __get_comparison_stats(session)
 
         # Load form labels
         labels = conf[WebSiteSetup.WEBSITE_CONFIGURATION][WebSiteSetup.WEBSITE_LABEL]
@@ -254,6 +255,10 @@ def rank():
             'confirmed_label': labels[WebSiteSetup.LABEL_ITEM_CONFIRMED_BUTTON],
             'skipped_label': labels[WebSiteSetup.LABEL_ITEM_SKIPPED_BUTTON],
             'comparison_intruction_label': labels[WebSiteSetup.LABEL_ITEM_INSTRUCTION],
+            'comparison_number_label': labels[WebSiteSetup.LABEL_COMPARISON_NUMBER],
+            'comparison_number': compared,
+            'skipped_number_label': labels[WebSiteSetup.LABEL_SKIPPED_NUMBER],
+            'skipped_number': skipped,
             'rejudge_value': REJUDGE,
             'confirmed_value': CONFIRMED,
             'skipped_value': SKIPPED,
@@ -337,6 +342,34 @@ def logout():
     session.clear()
     print(session.keys())
     return redirect(url_for('.register_user'))
+
+def __get_comparison_stats(session):
+    """Get summary statistics about the comparison made
+    Args:
+        session (dict): User session.
+    Returns
+        compared: Number of comparisons made
+        skipped: Number of comparisons skipped 
+    """
+    compared = 0
+    skipped = 0
+    res = db.session.\
+        query(Comparison.state, func.count(Comparison.id)).\
+        where(Comparison.user_id == session['user_id']).\
+        group_by(Comparison.state).all()
+    
+    if len(res) == 0:
+        return compared, skipped
+    
+    for states in res:
+        stateName, number = states
+        if stateName == Comparison.SELECTED or stateName == Comparison.TIGHT:
+            compared = compared + number
+        if stateName == Comparison.SKIPPED:
+            skipped = number
+
+    return compared, skipped
+
 
 def __get_items_to_compare(comparison_id=None):
     """Get the items to compare.
@@ -423,7 +456,7 @@ def __get_items_to_compare(comparison_id=None):
                 UserItem.known == 1
             ).all()
         
-        if len(result) < 1:
+        if len(result) < 2:
             return None, None
         
         items_id = []
@@ -447,6 +480,9 @@ def __get_items_to_compare(comparison_id=None):
                 UserGroup.user_id == session['user_id'],
                 UserGroup.group_id.in_(session['group_ids'])
             ).all()
+        
+        if len(result) < 2:
+            return None, None
         
         items_id = []
         items = {}
