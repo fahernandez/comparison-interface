@@ -63,7 +63,7 @@ def register_user():
         # Render the whole template
         return render_template('page/register.html', **{**{
             'title': labels[WebSiteSetup.LABEL_USER_REGISTER_FORM_TITLE],
-            'buttom': labels[WebSiteSetup.LABEL_USER_REGISTER_BUTTOM],
+            'buttom': labels[WebSiteSetup.LABEL_USER_REGISTER_BUTTON],
             'components':user_components
         },**__get_layout_labels(labels)})
 
@@ -170,8 +170,8 @@ def item_selection():
         return render_template('page/item_preference.html', **{**{
             'item':item,
             'item_selection_question': labels[WebSiteSetup.LABEL_ITEM_SELECTION_QUESTION],
-            'item_selection_answer_no': labels[WebSiteSetup.LABEL_ITEM_SELECTION_NO],
-            'item_selection_answer_yes': labels[WebSiteSetup.LABEL_ITEM_SELECTION_YES]
+            'item_selection_answer_no': labels[WebSiteSetup.LABEL_ITEM_SELECTION_NO_BUTTON],
+            'item_selection_answer_yes': labels[WebSiteSetup.LABEL_ITEM_SELECTION_YES_BUTTON]
         },**__get_layout_labels(labels)})
     
     if request.method == 'POST':
@@ -201,6 +201,11 @@ def item_selection():
 
 @blueprint.route('/rank', methods=['GET', 'POST'])
 def rank():
+    # Available rank actions
+    REJUDGE = 'rejudged'
+    CONFIRMED = 'confirmed'
+    SKIPPED = 'skipped'
+
     response = __validate_session(session)
     if response:
         return response
@@ -242,15 +247,16 @@ def rank():
             'page/rank.html', **{**{
             'item_1':item_1, 
             'item_2':item_2,
-            'selected_item_label': labels[WebSiteSetup.LABEL_ITEM_SELECTED],
+            'selected_item_label': labels[WebSiteSetup.LABEL_ITEM_SELECTED_LABEL],
+            'tight_selection_label': labels[WebSiteSetup.LABEL_TIGHT_SELECTION_LABEL],
             'instruction_label': labels[WebSiteSetup.LABEL_ITEM_INSTRUCTION],
-            'rejudge_label': labels[WebSiteSetup.LABEL_ITEM_REJUDGE],
-            'compared_label': labels[WebSiteSetup.LABEL_ITEM_COMPARED],
-            'skipped_label': labels[WebSiteSetup.LABEL_ITEM_SKIPPED],
+            'rejudge_label': labels[WebSiteSetup.LABEL_ITEM_REJUDGE_BUTTON],
+            'confirmed_label': labels[WebSiteSetup.LABEL_ITEM_CONFIRMED_BUTTON],
+            'skipped_label': labels[WebSiteSetup.LABEL_ITEM_SKIPPED_BUTTON],
             'comparison_intruction_label': labels[WebSiteSetup.LABEL_ITEM_INSTRUCTION],
-            'rejudge_value': Comparison.REJUDGE,
-            'compared_value': Comparison.COMPARED,
-            'skipped_value': Comparison.SKIPPED,
+            'rejudge_value': REJUDGE,
+            'confirmed_value': CONFIRMED,
+            'skipped_value': SKIPPED,
             'can_redjudge': can_redjudge,
             'comparison_id': comparison_id
             
@@ -258,11 +264,22 @@ def rank():
     
     if request.method == 'POST':
         response = request.form.to_dict(flat=True)
-        if response['state'] != Comparison.REJUDGE:
+        action = response['state']
+        if action != REJUDGE:
+            # Set the comparison state based on the user's action
+            state = None
             selected_item_id = None
-            if 'selected_item_id' in response and response['state'] == Comparison.COMPARED:
+            if action == CONFIRMED and (not 'selected_item_id' in response or response['selected_item_id'] == ""):
+                state = Comparison.TIGHT
+                
+            if action == CONFIRMED and 'selected_item_id' in response and response['selected_item_id'] != "":
+                state = Comparison.SELECTED
                 selected_item_id = response['selected_item_id']
-
+    
+            if action == SKIPPED:
+                state = Comparison.SKIPPED
+                
+            # Verify if the user want to rejudge an item
             comparison_id = None
             if 'comparison_id' in response and response['comparison_id'] != "":
                 comparison_id = response['comparison_id']
@@ -273,7 +290,7 @@ def rank():
                     user_id = session['user_id'],
                     item_1_id = response['item_1_id'],
                     item_2_id = response['item_2_id'],
-                    state = response['state'],
+                    state = state,
                     selected_item_id = selected_item_id
                 )
                 try:
@@ -298,7 +315,8 @@ def rank():
                 
                 try:
                     comparison.selected_item_id = selected_item_id
-                    comparison.state = response['state']
+                    comparison.state = state
+                    comparison.updated = datetime.datetime.now(datetime.timezone.utc)
                     db.session.commit()
                     # Return the pointer to the last comparasion made
                     session['previous_comparison_id'] = session['comparison_ids'][len(session['comparison_ids'])-1]
@@ -307,7 +325,7 @@ def rank():
         
             return redirect(url_for('.rank'))
     
-        if response['state'] == Comparison.REJUDGE:
+        if action == REJUDGE:
             return redirect(url_for('.rank', comparison_id=session['previous_comparison_id']))
 
     raise RuntimeError("Method not implemented")

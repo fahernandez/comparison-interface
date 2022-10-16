@@ -79,8 +79,7 @@ class Comparison(db.Model, BaseModel):
     """
     __tablename__ = 'comparison'
     # Available comparison states
-    COMPARED = 'compared'
-    REJUDGE = 'rejudge'
+    SELECTED = 'selected'
     SKIPPED = 'skipped'
     TIGHT = 'tight'
 
@@ -92,6 +91,7 @@ class Comparison(db.Model, BaseModel):
     # TODO define state as an enum
     state = db.Column(db.String(20), nullable=False)
     created = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    updated = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
 class CustomItemPair(db.Model, BaseModel):
     """Holds pair of items with custom weight configuration. If this

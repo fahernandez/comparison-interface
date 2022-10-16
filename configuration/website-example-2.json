@@ -106,15 +106,17 @@
             "websitehome": "Home",
             "groupQuestion": "Please select the area more recognizable for you.",
             "userRegisterFormTitle": "Register",
-            "userRegisterButtom": "Register",
+            "userRegisterButton": "Register",
             "itemSelectionQuestion": "Do you know the region ",
-            "itemSelectionYesButtom": "Yes",
-            "itemSelectionNoButtom": "No",
-            "itemSelectedIndicator": "BIGGER",
-            "itemRejudgeButtom": "Previous",
-            "itemComparedButtom": "Confirm",
-            "itemSkippedButtom": "Skip",
-            "itemInstruction": "Please click the bigger region. Then click on the Confirm blue buttom."
+            "itemSelectionYesButton": "Yes",
+            "itemSelectionNoButton": "No",
+            "itemSelectedIndicatorLabel": "BIGGER",
+            "tightSelectionIndicatorLabel": "EQUAL",
+            "itemBothSelectedIndicatorLabel": "EQUAL",
+            "itemRejudgeButton": "Previous",
+            "itemConfirmedButton": "Confirm",
+            "itemSkippedButton": "Skip",
+            "itemInstruction": "Please click the bigger region. Then click on the Confirm blue button."
         },
         "userFields": [
             {
