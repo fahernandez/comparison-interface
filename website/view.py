@@ -10,7 +10,8 @@ from numpy.random import choice
 
 # Custom libraries
 from model.connection import db
-from model.schema import User, Group, UserItem, Item, Comparison, WebsiteControl, UserGroup, CustomItemPair
+from model.schema import (User, Group, UserItem, Item, Comparison, WebsiteControl, 
+    UserGroup, CustomItemPair, ItemGroup)
 from configuration.website import Setup as WebSiteSetup
 
 blueprint = Blueprint('views', __name__)
@@ -139,9 +140,10 @@ def item_selection():
     
     if request.method == 'GET':
         # Get all items preferences not specified for the user yet.
-        result = db.session.query(User, UserGroup, Item, UserItem).\
+        result = db.session.query(User, UserGroup, ItemGroup, Item, UserItem).\
             join(UserGroup, UserGroup.user_id == User.id, isouter = True).\
-            join(Item, UserGroup.group_id == Item.group_id, isouter = True).\
+            join(ItemGroup, ItemGroup.group_id == UserGroup.group_id, isouter = True).\
+            join(Item, ItemGroup.item_id == Item.id, isouter = True).\
             join(
                 UserItem,
                 (UserItem.user_id == User.id) & (UserItem.item_id == Item.id), 
@@ -150,6 +152,7 @@ def item_selection():
             where(
                 User.id == session['user_id'], 
                 UserGroup.group_id.in_(session['group_ids']),
+                ItemGroup.group_id.in_(session['group_ids']),
                 UserItem.id == None
             ).order_by(func.random()).\
             first()
@@ -159,7 +162,7 @@ def item_selection():
         if not result:
             return redirect(url_for('.rank'))
 
-        _, _ ,item, _ = result
+        _, _ , _, item, _ = result
         # Load the configuration
         s = WebSiteSetup(current_app)
         conf = s.load()
@@ -413,16 +416,14 @@ def __get_items_to_compare(comparison_id=None):
 
     # Case 2: Get a random pair from list of custom defined weights
     if session['weight_conf'] == WebsiteControl.CUSTOM_WEIGHT:
-        # 1. Get the the custom pairs 
+        # 1. Get the the custom pairs. This query assumes that just one group
+        # can be selected by the user when defining custom weights.
         result = db.session.query(UserGroup, CustomItemPair).\
             join(CustomItemPair, CustomItemPair.group_id == UserGroup.group_id, isouter = True).\
             where(
                 UserGroup.user_id == session['user_id'], 
                 UserGroup.group_id.in_(session['group_ids'])
             ).all()
-        
-        if len(result) == 0:
-            return None, None
 
         pair_ids = []
         pair_weights = []
@@ -431,6 +432,9 @@ def __get_items_to_compare(comparison_id=None):
             pairs[p.id] = p
             pair_ids.append(p.id)
             pair_weights.append(p.weight)
+        
+        if len(pair_ids) == 0:
+            return None, None
         
         # 2. Select the item pair to compare but respecting the custom weights
         pair_id = choice(pair_ids, 1, p=pair_weights, replace=False)
@@ -456,14 +460,16 @@ def __get_items_to_compare(comparison_id=None):
                 UserItem.known == 1
             ).all()
         
-        if len(result) < 2:
-            return None, None
-        
         items_id = []
         items = {}
         for _, i in result:
-            items_id.append(i.id)
-            items[i.id] = i
+            # Insert only unique values to guarantee an equal item distribution.
+            if not i.id in items_id:
+                items_id.append(i.id)
+                items[i.id] = i
+
+        if len(items_id) < 2:
+            return None, None
         
         # 2. Select randomly two items from the user's item preferences
         selected_items_id = choice(items_id, 2, replace=False)
@@ -474,21 +480,25 @@ def __get_items_to_compare(comparison_id=None):
     if session['weight_conf'] == WebsiteControl.EQUAL_WEIGHT and \
         not current_app.config['RENDER_USER_ITEM_PREFERENCE']:
         # 1. Get the items related to the user's group preferences
-        result = db.session.query(UserGroup, Item).\
-            join(Item, Item.group_id == UserGroup.group_id, isouter = True).\
+        result = db.session.query(UserGroup, ItemGroup, Item).\
+            join(ItemGroup, ItemGroup.group_id == UserGroup.group_id, isouter = True).\
+            join(Item, ItemGroup.item_id == Item.id, isouter = True).\
             where(
                 UserGroup.user_id == session['user_id'],
-                UserGroup.group_id.in_(session['group_ids'])
+                UserGroup.group_id.in_(session['group_ids']),
+                ItemGroup.group_id.in_(session['group_ids'])
             ).all()
-        
-        if len(result) < 2:
-            return None, None
         
         items_id = []
         items = {}
-        for _, i in result:
-            items_id.append(i.id)
-            items[i.id] = i
+        for _, _, i in result:
+            # Insert only unique values to guarantee an equal item distribution.
+            if not i.id in items_id:
+                items_id.append(i.id)
+                items[i.id] = i
+                
+        if len(items_id) < 2:
+            return None, None
         
         # 2. Select randomly two items using the user's group preferences
         selected_items_id = choice(items_id, 2, replace=False)

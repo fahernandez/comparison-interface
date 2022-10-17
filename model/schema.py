@@ -1,4 +1,5 @@
 from model.connection import db
+from sqlalchemy.schema import UniqueConstraint
 import datetime
 
 class BaseModel():
@@ -22,6 +23,13 @@ class Group(db.Model, BaseModel):
     display_name = db.Column(db.String(255), nullable=False)
     created_date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
+    __table_args__ = (
+        UniqueConstraint(
+            'name',
+            name='_group_name_uidx'
+        ),
+    )
+
 class Item(db.Model, BaseModel):
     """
     The item model represent each of the object being compared
@@ -34,11 +42,41 @@ class Item(db.Model, BaseModel):
     __tablename__ = 'item'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    group_id = db.Column(db.Integer, db.ForeignKey('group.id'), nullable=False)
     name = db.Column(db.String(255), nullable=False)
     display_name = db.Column(db.String(255), nullable=False)
     image_path = db.Column(db.String(1000), nullable=False)
     created_date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    
+    __table_args__ = (UniqueConstraint(
+        'name',
+        'display_name',
+        'image_path', 
+        name='_item_name_display_name_image_path_uidx'),
+    )
+    
+class ItemGroup(db.Model, BaseModel):
+    """
+    The item model represent each of the object being compared
+
+    Args:
+        db (SQLAlchemy): SQLAlchemy connection object
+
+    Returns: none
+    """
+    __tablename__ = 'item_group'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    item_id = db.Column(db.Integer, db.ForeignKey('group.id'), nullable=False)
+    group_id = db.Column(db.Integer, db.ForeignKey('item.id'), nullable=False)
+    created_date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    
+    __table_args__ = (
+        UniqueConstraint(
+            'item_id',
+            'group_id',
+            name='_item_group_uidx'
+        ),
+    )
 
 class User(db.Model, BaseModel):
     """Represents the actual person making the comparisson
@@ -68,6 +106,14 @@ class UserGroup(db.Model, BaseModel):
     group_id = db.Column(db.Integer, db.ForeignKey('group.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created_date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    
+    __table_args__ = (
+        UniqueConstraint(
+            'group_id',
+            'user_id',
+            name='_user_group_uidx'
+        ),
+    )
 
 class Comparison(db.Model, BaseModel):
     """The actual compararisson made between the items by the user.
@@ -110,6 +156,16 @@ class CustomItemPair(db.Model, BaseModel):
     item_2_id = db.Column(db.Integer, db.ForeignKey('item.id'), nullable=False)
     weight = db.Column(db.Float, nullable=False)
     created = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    
+    __table_args__ = (
+        UniqueConstraint(
+            'group_id',
+            'item_1_id',
+            'item_2_id',
+            name='_custom_item_pair_uidx'
+        ),
+    )
+
 
 class UserItem(db.Model, BaseModel):
     """Items that are recognizable by the user. 
@@ -127,6 +183,15 @@ class UserItem(db.Model, BaseModel):
     item_id = db.Column(db.Integer, db.ForeignKey('item.id'), nullable=False)
     known = db.Column(db.Boolean, nullable=False) # 0 for unknow. 1 for know.
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    
+    __table_args__ = (
+        UniqueConstraint(
+            'user_id',
+            'item_id',
+            name='_user_item_uidx'
+        ),
+    )
+
 
 class WebsiteControl(db.Model, BaseModel):
     """Control table to know if the application is in a healthly state.

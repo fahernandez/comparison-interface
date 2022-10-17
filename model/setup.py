@@ -3,7 +3,7 @@ from sqlalchemy import Integer, String, MetaData
 from migrate.versioning.schema import Table, Column
 # Custom libraries
 from model.connection import db, persist
-from model.schema import Group, Item, WebsiteControl, CustomItemPair
+from model.schema import Group, Item, WebsiteControl, CustomItemPair, ItemGroup
 from configuration.website import Setup as WebSiteSetup
 
 class Setup:
@@ -80,7 +80,7 @@ class Setup:
                 c.group_id = group.id
                 c.weight = w["weight"]
                 db.session.add(c)
-                
+
         return
 
     def __setup_item(self, db, group, g):
@@ -93,18 +93,63 @@ class Setup:
         """
         # Insert each of the items related to the groups
         items = []
-        for i in g[WebSiteSetup.GROUP_ITEMS]:                 
-            item = Item(
-                group_id=group.id,
-                name=i[WebSiteSetup.ITEM_NAME],
-                display_name=i[WebSiteSetup.ITEM_DISPLAY_NAME],
-                image_path=i[WebSiteSetup.ITEM_IMAGE_NAME]
-            )
+        for i in g[WebSiteSetup.GROUP_ITEMS]:
+            # Verify if the item already exists in the database
+            item = db.session.query(Item).\
+                where(
+                    Item.name == i[WebSiteSetup.ITEM_NAME],
+                    Item.display_name == i[WebSiteSetup.ITEM_DISPLAY_NAME],
+                    Item.image_path == i[WebSiteSetup.ITEM_IMAGE_NAME]
+                ).first()
+            # Insert the item in the database if it doesn't exists
+            if item == None:
+                item = Item(
+                    name = i[WebSiteSetup.ITEM_NAME],
+                    display_name = i[WebSiteSetup.ITEM_DISPLAY_NAME],
+                    image_path = i[WebSiteSetup.ITEM_IMAGE_NAME]
+                )
+                persist(db, item)
+            else:
+                self.app.logger.info("Duplicated item {}. Using existing item information.".format(item.name))
+            self.__setup_item_group(db, item, group)
+                
+            items.append(item)
             
-            items.append(persist(db, item))
 
         return items
-            
+    
+    def __setup_item_group(self, db, item, group):
+        """Relate the item to the correspondant group in the database
+
+        Args:
+            db (SQLAlquemy): Database connection
+            item (SQLAlquemy): Inserted item object.
+            group (SQLAlquemy): Inserted group object.
+        """
+        item_id = item.id
+        group_id = group.id
+        
+        # Verify if the item was already related to the group
+        item_group = db.session.query(ItemGroup).\
+            where(
+                ItemGroup.item_id == item_id,
+                ItemGroup.group_id == group_id
+            ).first()
+        
+        # Relate the item to the group if the relationship hasn't been created yet.
+        if item_group == None:
+            item_group = ItemGroup(
+                item_id = item_id,
+                group_id = group_id
+            )
+            persist(db, item_group)
+        else:
+            self.app.logger.info("Item {} is already related to group {}. Using existing information".\
+                format(
+                    item.name,
+                    group.name
+                ))     
+
     def __setup_user(self, db, config):
         """Save the user configuration in the database. User fields are dynamically configured
         using the website configuration file.
