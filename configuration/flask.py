@@ -9,11 +9,14 @@ class Settings(object):
     WEBSITE_ADMINISTRATOR_EMAIL = 'admin@admin.com'
     DEBUG = True
     SQLALCHEMY_DATABASE_URI='sqlite:///../model/database.db'
+    EXPORT_PATH_LOCATION='model/database.xlsx'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SEND_FILE_MAX_AGE_DEFAULT = 10
-    WEBSITE_SETUP_LOCATION = 'configuration/website-example-1.json'
-    #WEBSITE_SETUP_LOCATION = 'configuration/website-example-2.json'
-    RENDER_USER_ITEM_PREFERENCE = False
+    #WEBSITE_SETUP_LOCATION = 'configuration/website-example-1.json'
+    WEBSITE_SETUP_LOCATION = 'configuration/website-example-2.json'
+    #WEBSITE_SETUP_LOCATION = 'configuration/website-south-yorkshire.json'
+    RENDER_USER_ITEM_PREFERENCE = True
     
+    # conda list -e > build/requirements.txt
     # export FLASK_ENV=development;
     # export FLASK_APP=website;

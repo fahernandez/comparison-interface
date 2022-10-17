@@ -45,9 +45,9 @@
                 "displayName": "East of England",
                 "items":[
                     {
-                        "name": "north_east",
-                        "displayName": "North East",
-                        "imageName": "item_1.png"
+                        "name": "wales",
+                        "displayName": "Wales",
+                        "imageName": "item_10.png"
                     },
                     {
                         "name": "yorshire",
@@ -67,17 +67,17 @@
                 ],
                 "weight":[
                     {
-                        "item_1": "north_east",
+                        "item_1": "wales",
                         "item_2": "yorshire",
                         "weight":0.1
                     },
                     {
-                        "item_1": "north_east",
+                        "item_1": "wales",
                         "item_2": "east_midlands",
                         "weight":0.2
                     },
                     {
-                        "item_1": "north_east",
+                        "item_1": "wales",
                         "item_2": "eastern",
                         "weight":0.2
                     },
@@ -112,7 +112,6 @@
             "itemSelectionNoButton": "No",
             "itemSelectedIndicatorLabel": "BIGGER",
             "tightSelectionIndicatorLabel": "EQUAL",
-            "itemBothSelectedIndicatorLabel": "EQUAL",
             "itemRejudgeButton": "Previous",
             "itemConfirmedButton": "Confirm",
             "itemSkippedButton": "Skip",

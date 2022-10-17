@@ -5,6 +5,7 @@ from migrate.versioning.schema import Table, Column
 from model.connection import db, persist
 from model.schema import Group, Item, WebsiteControl, CustomItemPair, ItemGroup
 from configuration.website import Setup as WebSiteSetup
+import os
 
 class Setup:
     def __init__(self, app) -> None:
@@ -20,13 +21,19 @@ class Setup:
         with self.app.app_context():
             db.drop_all()
             db.create_all()
+            
+            # Remove previous exported database content
+            if os.path.exists(self.app.config['EXPORT_PATH_LOCATION']):
+                os.remove(self.app.config['EXPORT_PATH_LOCATION'])
 
             # The session needs be commited after creationg the groups.
             self.__setup_group(db, config)
             self.__setup_website_control_history(db, config)
             db.session.commit()
             
-            # The setup of the user configuration doesn't use SQLAlquemy ORM
+            # The setup of the user configuration doesn't use SQLAlquemy ORM. The transaction
+            # needs to be committed before inserting the user fields values. The user
+            # columns values are dynamically defined so a different process needs to be followed.
             self.__setup_user(db, config)
 
     def __setup_group(self, db, config):

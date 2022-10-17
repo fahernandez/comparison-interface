@@ -88,7 +88,6 @@
             "itemSelectionNoButton": "No",
             "itemSelectedIndicatorLabel": "BIGGER",
             "tightSelectionIndicatorLabel": "EQUAL",
-            "itemBothSelectedIndicatorLabel": "EQUAL",
             "itemRejudgeButton": "Previous",
             "itemConfirmedButton": "Confirm",
             "itemSkippedButton": "Skip",

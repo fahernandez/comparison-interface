@@ -42,7 +42,6 @@ class Setup:
     LABEL_ITEM_SELECTION_YES_BUTTON = "itemSelectionYesButton"
     LABEL_ITEM_SELECTION_NO_BUTTON = "itemSelectionNoButton"
     LABEL_ITEM_SELECTED_LABEL = "itemSelectedIndicatorLabel"
-    LABEL_ITEM_EQUAL_SELECTED_LABEL = "itemBothSelectedIndicatorLabel"
     LABEL_ITEM_INSTRUCTION  = "itemInstruction"
     LABEL_COMPARISON_NUMBER  = "comparisonNumberLabel"
     LABEL_SKIPPED_NUMBER  = "skippedNumberLabel"
