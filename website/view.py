@@ -341,9 +341,7 @@ def rank():
 
 @blueprint.route('/logout')
 def logout():
-    print(session.keys())
     session.clear()
-    print(session.keys())
     return redirect(url_for('.register_user'))
 
 def __get_comparison_stats(session):
