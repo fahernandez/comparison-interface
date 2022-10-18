@@ -4,18 +4,18 @@ class Setup:
     # Group related configuration keys
     COMPARISON_CONFIGURATION = 'comparisonConfiguration'
     GROUPS = 'groups'
-    GROUP_WEIGHT_CONFIGURATION = 'weightConfiguration'
     GROUP_NAME = 'name'
     GROUP_DISPLAY_NAME = 'displayName'
     GROUP_ITEMS = 'items'
+    GROUP_ITEMS_WEIGHT = 'weight'
     # Items related configuration keys
     ITEM_NAME = 'name'
     ITEM_GROUP_ID = 'group_id'
     ITEM_DISPLAY_NAME = 'displayName'
     ITEM_IMAGE_NAME = 'imageName'
-    ITEM_WEIGHT = 'weight'
     # Website configuration
     WEBSITE_CONFIGURATION = 'websiteConfiguration'
+    WEBSITE_WEIGHT_CONFIGURATION = 'weightConfiguration'
     WEBSITE_LABEL = 'label'
     WEBSITE_USER_FIELDS = 'userFields'
     # User fields
@@ -37,15 +37,18 @@ class Setup:
     LABEL_GROUP_QUESTION = "groupQuestion"
     LABEL_SITE_HOME_LABEL = "websitehome"
     LABEL_USER_REGISTER_FORM_TITLE = "userRegisterFormTitle"
-    LABEL_USER_REGISTER_BUTTOM = "userRegisterButtom"
+    LABEL_USER_REGISTER_BUTTON = "userRegisterButton"
     LABEL_ITEM_SELECTION_QUESTION = "itemSelectionQuestion"
-    LABEL_ITEM_SELECTION_YES = "itemSelectionYesButtom"
-    LABEL_ITEM_SELECTION_NO = "itemSelectionNoButtom"
-    LABEL_ITEM_SELECTED = "itemSelectedIndicator"
+    LABEL_ITEM_SELECTION_YES_BUTTON = "itemSelectionYesButton"
+    LABEL_ITEM_SELECTION_NO_BUTTON = "itemSelectionNoButton"
+    LABEL_ITEM_SELECTED_LABEL = "itemSelectedIndicatorLabel"
     LABEL_ITEM_INSTRUCTION  = "itemInstruction"
-    LABEL_ITEM_REJUDGE = "itemRejudgeButtom"
-    LABEL_ITEM_COMPARED = "itemComparedButtom"
-    LABEL_ITEM_SKIPPED = "itemSkippedButtom"
+    LABEL_COMPARISON_NUMBER  = "comparisonNumberLabel"
+    LABEL_SKIPPED_NUMBER  = "skippedNumberLabel"
+    LABEL_ITEM_REJUDGE_BUTTON = "itemRejudgeButton"
+    LABEL_ITEM_CONFIRMED_BUTTON = "itemConfirmedButton"
+    LABEL_ITEM_SKIPPED_BUTTON = "itemSkippedButton"
+    LABEL_TIGHT_SELECTION_LABEL = "tightSelectionIndicatorLabel"
 
     def __init__(self, app) -> None:
         self.app = app

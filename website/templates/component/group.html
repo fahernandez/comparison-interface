@@ -4,7 +4,7 @@
 <div class="form-group row">
     <label for="group_id" class="col-4 col-form-label">{{label}}</label>
     <div class="col-8">
-        <select class="form-control" name="group_id" id="group_id" required>
+        <select class="form-control" name="group_ids" id="group_ids" required {% if multiple_selection %}multiple{% endif %}>
             <option disabled selected value></option>
             {% for group in groups %}
                 <option value="{{group.id}}">{{group.display_name}}</option>
