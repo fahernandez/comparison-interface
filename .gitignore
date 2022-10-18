@@ -1,7 +1,6 @@
 __pycache__/
 website/__pycache__/
 data/
-website/static/image/*
 .idea
 .vscode/
 tmp/
