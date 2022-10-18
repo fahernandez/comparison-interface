@@ -59,6 +59,10 @@ def create_app(test_config=None):
         prefix="assets/",
         max_age=WHITENOISE_MAX_AGE,
     )
+    # Add the image folder to WhiteNosise static handling
+    app.wsgi_app.add_files(
+        root=os.path.join(os.path.dirname(__file__), "static/image"),
+    )
 
     return app
 
