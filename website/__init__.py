@@ -7,6 +7,7 @@ from flask import Flask, render_template
 from flask import current_app
 from datetime import datetime as dt
 from whitenoise import WhiteNoise
+import os
 # Custom libraries
 from configuration.flask import Settings
 from configuration.website import Setup as WebSiteSetup
@@ -22,7 +23,11 @@ def create_app(test_config=None):
         Defaults to None.
     """
     # create and configure the app
-    app = Flask(__name__, instance_relative_config=True)
+    app = Flask(
+        __name__,
+        instance_relative_config=True,
+        static_folder="static"
+    )
     if test_config is None:
         app.config.from_object(Settings)
     else:
@@ -46,7 +51,14 @@ def create_app(test_config=None):
     app.register_error_handler(500, page_unexpected_condition)
     
     # Add the management for static libraries
-    app.wsgi_app = WhiteNoise(app.wsgi_app, root="website/static/")
+    WHITENOISE_MAX_AGE = 31536000 if not app.config["DEBUG"] else 0
+    # configure WhiteNoise
+    app.wsgi_app = WhiteNoise(
+        app.wsgi_app,
+        root=os.path.join(os.path.dirname(__file__), "static"),
+        prefix="assets/",
+        max_age=WHITENOISE_MAX_AGE,
+    )
 
     return app
 

@@ -98,5 +98,8 @@ export FLASK_ENV=development;
 export FLASK_APP=website;
 heroku ps:copy ~/model/database.xlsx
 heroku run bash;FLASK_APP=website;flask export;
+conda activate BSBT-Interface
 git push heroku main
+heroku logs  -f
+
 ```
