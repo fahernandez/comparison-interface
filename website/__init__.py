@@ -46,7 +46,6 @@ def create_app(test_config=None):
     app.register_error_handler(500, page_unexpected_condition)
     
     # Add the management for static libraries
-    app.wsgi_app = WhiteNoise(app.wsgi_app, root="website/static/")
     app.wsgi_app = WhiteNoise(app.wsgi_app)
     my_static_folders = (
         "website/static/css/",
