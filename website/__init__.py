@@ -6,6 +6,7 @@ import os
 from flask import Flask, render_template
 from flask import current_app
 from datetime import datetime as dt
+from whitenoise import WhiteNoise
 # Custom libraries
 from configuration.flask import Settings
 from configuration.website import Setup as WebSiteSetup
@@ -43,6 +44,17 @@ def create_app(test_config=None):
     # Register page errors
     app.register_error_handler(404, page_not_found)
     app.register_error_handler(500, page_unexpected_condition)
+    
+    # Add the management for static libraries
+    app.wsgi_app = WhiteNoise(app.wsgi_app, root="website/static/")
+    app.wsgi_app = WhiteNoise(app.wsgi_app)
+    my_static_folders = (
+        "website/static/css/",
+        "website/static/image/",
+        "website/static/js/"
+    )
+    for static in my_static_folders:
+        app.wsgi_app.add_files(static)
 
     return app
 
