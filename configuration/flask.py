@@ -8,8 +8,8 @@ class Settings(object):
     WEBSITE_ADMINISTRATOR = 'Site Administrator Name.'
     WEBSITE_ADMINISTRATOR_EMAIL = 'admin@admin.com'
     SQLALCHEMY_DATABASE_URI='sqlite:///../model/database.db'
-    EXPORT_PATH_LOCATION='model/database.xlsx'
+    EXPORT_PATH_LOCATION='../model/database.xlsx'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SEND_FILE_MAX_AGE_DEFAULT = 10
-    WEBSITE_SETUP_LOCATION = 'configuration/website-south-yorkshire.json'
+    WEBSITE_SETUP_LOCATION = '../configuration/website-south-yorkshire.json'
     RENDER_USER_ITEM_PREFERENCE = False
