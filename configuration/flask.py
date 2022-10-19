@@ -7,7 +7,6 @@ class Settings(object):
     WEBSITE_TITLE = 'Comparative Judgement'
     WEBSITE_ADMINISTRATOR = 'Site Administrator Name.'
     WEBSITE_ADMINISTRATOR_EMAIL = 'admin@admin.com'
-    DEBUG = True
     SQLALCHEMY_DATABASE_URI='sqlite:///../model/database.db'
     EXPORT_PATH_LOCATION='model/database.xlsx'
     SQLALCHEMY_TRACK_MODIFICATIONS = False

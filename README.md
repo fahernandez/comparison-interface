@@ -101,5 +101,9 @@ heroku run bash;FLASK_APP=website;flask export;
 conda activate BSBT-Interface
 git push heroku main
 heroku logs  -f
-
+git remote remove fahernandez
+git remote add fahernandez git@github.com:fahernandez/comparison-interface.git
+du -hs /tmp ~/.[!.]* ~/* | sort -h
+rm -rf /tmp/* /tmp/.*
+https://help.pythonanywhere.com/pages/Virtualenvs
 ```
