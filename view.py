@@ -90,19 +90,19 @@ def register_user():
             result = db.engine.execute(new_user_sql)
             # Get last inserted id
             id = result.lastrowid
-            user = db.session.query(User).filter(User.id == id).first()
+            user = db.session.query(User).filter(User.user_id == id).first()
             
             # Save the user's group preferences
             for id in group_ids:
                 ug = UserGroup()
                 ug.group_id = id
-                ug.user_id = user.id
+                ug.user_id = user.user_id
                 
                 db.session.add(ug)
                 db.session.commit()
 
             # Save reference to the inserted values in the session
-            session['user_id'] = user.id
+            session['user_id'] = user.user_id
             session['group_ids'] = group_ids
             session['weight_conf'] = WebsiteControl().get_conf().weight_configuration
             session['previous_comparison_id'] = None
@@ -141,19 +141,19 @@ def item_selection():
     if request.method == 'GET':
         # Get all items preferences not specified for the user yet.
         result = db.session.query(User, UserGroup, ItemGroup, Item, UserItem).\
-            join(UserGroup, UserGroup.user_id == User.id, isouter = True).\
+            join(UserGroup, UserGroup.user_id == User.user_id, isouter = True).\
             join(ItemGroup, ItemGroup.group_id == UserGroup.group_id, isouter = True).\
-            join(Item, ItemGroup.item_id == Item.id, isouter = True).\
+            join(Item, ItemGroup.item_id == Item.item_id, isouter = True).\
             join(
                 UserItem,
-                (UserItem.user_id == User.id) & (UserItem.item_id == Item.id), 
+                (UserItem.user_id == User.user_id) & (UserItem.item_id == Item.item_id), 
                 isouter = True
             ).\
             where(
-                User.id == session['user_id'], 
+                User.user_id == session['user_id'], 
                 UserGroup.group_id.in_(session['group_ids']),
                 ItemGroup.group_id.in_(session['group_ids']),
-                UserItem.id == None
+                UserItem.user_item_id == None
             ).order_by(func.random()).\
             first()
     
@@ -252,7 +252,7 @@ def rank():
             'item_1':item_1, 
             'item_2':item_2,
             'selected_item_label': labels[WebSiteSetup.LABEL_ITEM_SELECTED_LABEL],
-            'tight_selection_label': labels[WebSiteSetup.LABEL_TIGHT_SELECTION_LABEL],
+            'tied_selection_label': labels[WebSiteSetup.LABEL_TIED_SELECTION_LABEL],
             'instruction_label': labels[WebSiteSetup.LABEL_ITEM_INSTRUCTION],
             'rejudge_label': labels[WebSiteSetup.LABEL_ITEM_REJUDGE_BUTTON],
             'confirmed_label': labels[WebSiteSetup.LABEL_ITEM_CONFIRMED_BUTTON],
@@ -278,7 +278,7 @@ def rank():
             state = None
             selected_item_id = None
             if action == CONFIRMED and (not 'selected_item_id' in response or response['selected_item_id'] == ""):
-                state = Comparison.TIGHT
+                state = Comparison.TIED
                 
             if action == CONFIRMED and 'selected_item_id' in response and response['selected_item_id'] != "":
                 state = Comparison.SELECTED
@@ -305,15 +305,15 @@ def rank():
                     db.session.add(c)
                     db.session.commit()
                     # Save the comparison for future possible rejudging
-                    session['previous_comparison_id'] = c.id
-                    session['comparison_ids'] = session['comparison_ids'] + [c.id]
+                    session['previous_comparison_id'] = c.comparison_id
+                    session['comparison_ids'] = session['comparison_ids'] + [c.comparison_id]
                 except SQLAlchemyError as e:
                     raise RuntimeError(str(e))
             else:
                 # Rejudge an existance comparison.
                 comparison = db.session.query(Comparison).\
                     where(
-                        Comparison.id == comparison_id,
+                        Comparison.comparison_id == comparison_id,
                         Comparison.user_id == session['user_id']
                     ).\
                     first()
@@ -355,7 +355,7 @@ def __get_comparison_stats(session):
     compared = 0
     skipped = 0
     res = db.session.\
-        query(Comparison.state, func.count(Comparison.id)).\
+        query(Comparison.state, func.count(Comparison.comparison_id)).\
         where(Comparison.user_id == session['user_id']).\
         group_by(Comparison.state).all()
     
@@ -364,7 +364,7 @@ def __get_comparison_stats(session):
     
     for states in res:
         stateName, number = states
-        if stateName == Comparison.SELECTED or stateName == Comparison.TIGHT:
+        if stateName == Comparison.SELECTED or stateName == Comparison.TIED:
             compared = compared + number
         if stateName == Comparison.SKIPPED:
             skipped = number
@@ -389,7 +389,7 @@ def __get_items_to_compare(comparison_id=None):
         # 1. Get the items related to the comparison.
         comparison = db.session.query(Comparison).\
             where(
-                Comparison.id == comparison_id,
+                Comparison.comparison_id == comparison_id,
                 Comparison.user_id == session['user_id']
             ).\
             first()
@@ -400,7 +400,7 @@ def __get_items_to_compare(comparison_id=None):
         # 2. Get the items information
         items = db.session.query(Item).\
             where(
-                Item.id.in_([comparison.item_1_id, comparison.item_2_id])
+                Item.item_id.in_([comparison.item_1_id, comparison.item_2_id])
             ).all()
         
         # 3. Update the session parameters
@@ -427,8 +427,8 @@ def __get_items_to_compare(comparison_id=None):
         pair_weights = []
         pairs = {}
         for _, p in result:
-            pairs[p.id] = p
-            pair_ids.append(p.id)
+            pairs[p.custom_item_pair_id] = p
+            pair_ids.append(p.custom_item_pair_id)
             pair_weights.append(p.weight)
         
         if len(pair_ids) == 0:
@@ -442,7 +442,7 @@ def __get_items_to_compare(comparison_id=None):
         # 3. Get the items information
         items = db.session.query(Item).\
             where(
-                Item.id.in_([item_1_id, item_2_id])
+                Item.item_id.in_([item_1_id, item_2_id])
             ).all()
             
         return items[0], items[1]
@@ -452,7 +452,7 @@ def __get_items_to_compare(comparison_id=None):
         current_app.config['RENDER_USER_ITEM_PREFERENCE']:
         # 1. Get the know user items preferences 
         result = db.session.query(UserItem, Item).\
-            join(Item, Item.id == UserItem.item_id, isouter = True).\
+            join(Item, Item.item_id == UserItem.item_id, isouter = True).\
             where(
                 UserGroup.user_id == session['user_id'],
                 UserItem.known == 1
@@ -462,9 +462,9 @@ def __get_items_to_compare(comparison_id=None):
         items = {}
         for _, i in result:
             # Insert only unique values to guarantee an equal item distribution.
-            if not i.id in items_id:
-                items_id.append(i.id)
-                items[i.id] = i
+            if not i.item_id in items_id:
+                items_id.append(i.item_id)
+                items[i.item_id] = i
 
         if len(items_id) < 2:
             return None, None
@@ -480,7 +480,7 @@ def __get_items_to_compare(comparison_id=None):
         # 1. Get the items related to the user's group preferences
         result = db.session.query(UserGroup, ItemGroup, Item).\
             join(ItemGroup, ItemGroup.group_id == UserGroup.group_id, isouter = True).\
-            join(Item, ItemGroup.item_id == Item.id, isouter = True).\
+            join(Item, ItemGroup.item_id == Item.item_id, isouter = True).\
             where(
                 UserGroup.user_id == session['user_id'],
                 UserGroup.group_id.in_(session['group_ids']),
@@ -491,9 +491,9 @@ def __get_items_to_compare(comparison_id=None):
         items = {}
         for _, _, i in result:
             # Insert only unique values to guarantee an equal item distribution.
-            if not i.id in items_id:
-                items_id.append(i.id)
-                items[i.id] = i
+            if not i.item_id in items_id:
+                items_id.append(i.item_id)
+                items[i.item_id] = i
                 
         if len(items_id) < 2:
             return None, None

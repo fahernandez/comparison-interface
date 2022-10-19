@@ -20,7 +20,7 @@
   opacity: 0.6;
 }
 
-.selection-tight {
+.selection-tied {
   border-style: solid;
   border-width: 10px;
   border-color: blue;
@@ -76,7 +76,7 @@
             </h4>
           </div>
           <div class="text-center">
-            <input type="hidden" id="item_1_id" name="item_1_id" value={{ item_1.id }}>
+            <input type="hidden" id="item_1_id" name="item_1_id" value={{ item_1.item_id }}>
             <img id="left-item" src= {{ url_for('static', filename = 'image/' + item_1.image_path|string) }} class="left-item img-responsive img-contraint">
           </div>
         </div>
@@ -87,7 +87,7 @@
             </h4>
           </div>
           <div class="text-center">
-            <input type="hidden" id="item_2_id" name="item_2_id" value={{ item_2.id }}>
+            <input type="hidden" id="item_2_id" name="item_2_id" value={{ item_2.item_id }}>
             <img id="right-item" src= {{ url_for('static', filename = 'image/' + item_2.image_path|string) }} class="right-item img-responsive img-contraint">
           </div>
           </div>
@@ -145,7 +145,7 @@ function hintItem(clickedItem) {
   if (!isItem1Selected && !isItem2Selected) {
     // Clean the all visual hints
     cleanVisualHint('selected-item', item1, item2);
-    cleanVisualHint('selection-tight', item1, item2);
+    cleanVisualHint('selection-tied', item1, item2);
     
     // Show the item item as selected
     addVisualHint('selected-item', clickedItem, 'selected');
@@ -163,18 +163,18 @@ function hintItem(clickedItem) {
     return
   }
 
-  // Case 2: Just one item was selected. Result: Tight case.
+  // Case 2: Just one item was selected. Result: Tied case.
   if (
     (clickedItem1 && !isItem1Selected && isItem2Selected) ||
     (clickedItem2 && !isItem2Selected && isItem1Selected)
   ) {
       // Clean the selected-items class
       cleanVisualHint('selected-item', item1, item2);
-      cleanVisualHint('selection-tight', item1, item2);
+      cleanVisualHint('selection-tied', item1, item2);
 
-      // Show both items as selected (Tight case)
-      addVisualHint('selection-tight', item1, 'tight');
-      addVisualHint('selection-tight', item2, 'tight');
+      // Show both items as selected (Tied case)
+      addVisualHint('selection-tied', item1, 'tied');
+      addVisualHint('selection-tied', item2, 'tied');
 
       // Activate the confirm button
       activateConfirmButton()
@@ -187,9 +187,9 @@ function hintItem(clickedItem) {
 
   // Case 3: One item was unselected. Result: The other item gets the bigger Label
   if (isItem1Selected && isItem2Selected) {
-    // Clean the tight selection class
+    // Clean the tied selection class
     cleanVisualHint('selected-item', item1, item2);
-    cleanVisualHint('selection-tight', item1, item2);
+    cleanVisualHint('selection-tied', item1, item2);
 
     // Activate the confirm button
     activateConfirmButton()
@@ -223,7 +223,7 @@ function hintItem(clickedItem) {
   ) {
     // Clean the selected-items class
     cleanVisualHint('selected-item', item1, item2);
-    cleanVisualHint('selection-tight', item1, item2);
+    cleanVisualHint('selection-tied', item1, item2);
 
     // Deactive the confirm button
     deactivateConfirmButton()
@@ -243,8 +243,8 @@ function cleanVisualHint(itemClass, item1, item2) {
 
 function addVisualHint(itemClass, item, type) {
   hintElement = '<div class="centered" style="pointer-events:none;"><h1 style="font-size:60px; color:green; font-weight: bold;pointer-events:none;">{{selected_item_label}}</h1></div>';
-  if (type == "tight") {
-    hintElement = '<div class="centered" style="pointer-events:none;"><h1 style="font-size:60px; color:blue; font-weight: bold;pointer-events:none;">{{tight_selection_label}}</h1></div>';
+  if (type == "tied") {
+    hintElement = '<div class="centered" style="pointer-events:none;"><h1 style="font-size:60px; color:blue; font-weight: bold;pointer-events:none;">{{tied_selection_label}}</h1></div>';
   }
 
   item.classList.add(itemClass);

@@ -1,5 +1,5 @@
 {% if groups|length < 2 %}
-    <input type="hidden" id="group_id" name="group_id" value="{{groups[0].id}}">
+    <input type="hidden" id="group_id" name="group_id" value="{{groups[0].group_id}}">
 {% else %}
 <div class="form-group row">
     <label for="group_id" class="col-4 col-form-label">{{label}}</label>
@@ -7,7 +7,7 @@
         <select class="form-control" name="group_ids" id="group_ids" required {% if multiple_selection %}multiple{% endif %}>
             <option disabled selected value></option>
             {% for group in groups %}
-                <option value="{{group.id}}">{{group.display_name}}</option>
+                <option value="{{group.group_id}}">{{group.display_name}}</option>
             {% endfor %}
         </select>
     </div>

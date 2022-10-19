@@ -614,7 +614,7 @@
             "itemSelectionYesButton": "Yes",
             "itemSelectionNoButton": "No",
             "itemSelectedIndicatorLabel": "HIGHER",
-            "tightSelectionIndicatorLabel": "EQUAL",
+            "tiedSelectionIndicatorLabel": "EQUAL",
             "itemRejudgeButton": "Previous",
             "itemConfirmedButton": "Confirm",
             "itemSkippedButton": "Skip",

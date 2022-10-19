@@ -78,13 +78,13 @@ class Setup:
         
             items_dict = {}
             for i in items:
-                items_dict[i.name] = int(i.id)
+                items_dict[i.name] = int(i.item_id)
 
             for w in weights:
                 c = CustomItemPair()
                 c.item_1_id = items_dict[w["item_1"]]
                 c.item_2_id = items_dict[w["item_2"]]
-                c.group_id = group.id
+                c.group_id = group.group_id
                 c.weight = w["weight"]
                 db.session.add(c)
 
@@ -133,8 +133,8 @@ class Setup:
             item (SQLAlquemy): Inserted item object.
             group (SQLAlquemy): Inserted group object.
         """
-        item_id = item.id
-        group_id = group.id
+        item_id = item.item_id
+        group_id = group.group_id
         
         # Verify if the item was already related to the group
         item_group = db.session.query(ItemGroup).\
