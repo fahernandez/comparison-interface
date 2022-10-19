@@ -3,6 +3,7 @@ from flask import Blueprint
 from flask.cli import with_appcontext
 from flask import current_app
 from sqlalchemy.exc import OperationalError
+import os
 # Custom libraries
 from model.setup import Setup as DBSetup
 from model.export import Export
@@ -65,6 +66,6 @@ def export():
     env variable EXPORT_PATH_LOCATION.
     """
     app = current_app
-    location = app.config['EXPORT_PATH_LOCATION']
+    location = os.path.join(os.path.dirname(__file__), app.config['EXPORT_PATH_LOCATION'])
     app.logger.info("Exporting database tables into {}".format(location))
     Export(app).save(location)
