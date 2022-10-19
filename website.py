@@ -13,7 +13,7 @@ from configuration.flask import Settings
 from configuration.website import Setup as WebSiteSetup
 from model.connection import db
 from model.schema import WebsiteControl
-from website import command, view
+import command, view
 
 def create_app(test_config=None):
     """Start Flask website application

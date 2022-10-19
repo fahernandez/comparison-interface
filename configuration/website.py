@@ -85,7 +85,7 @@ class Setup:
         Returns:
             json: Website configuration file.
         """
-        location = os.path.join(os.path.dirname(__file__), self.app.config['WEBSITE_SETUP_LOCATION'])
+        location = self.app.config['WEBSITE_SETUP_LOCATION']
         config_data = None
         try:
             with open(location, 'r') as config_file:

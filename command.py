@@ -66,6 +66,6 @@ def export():
     env variable EXPORT_PATH_LOCATION.
     """
     app = current_app
-    location = os.path.join(os.path.dirname(__file__), app.config['EXPORT_PATH_LOCATION'])
+    location = app.config['EXPORT_PATH_LOCATION']
     app.logger.info("Exporting database tables into {}".format(location))
     Export(app).save(location)
