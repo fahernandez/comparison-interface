@@ -11,5 +11,9 @@ class Settings(object):
     EXPORT_PATH_LOCATION='./model/database.xlsx'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SEND_FILE_MAX_AGE_DEFAULT = 10
-    WEBSITE_SETUP_LOCATION = './configuration/website-south-yorkshire.json'
-    RENDER_USER_ITEM_PREFERENCE = False
+    WEBSITE_SETUP_LOCATION = './configuration/website-example-1.json'
+    RENDER_USER_ITEM_PREFERENCE = True
+    RENDER_USER_INSTRUCTIONS = True
+    RENDER_ETHICS_AGREEMENT = True
+    USER_INSTRUCTIONS_LINK = "https://docs.google.com/document/d/e/2PACX-1vT2yGXStletU0XGL6DaA45tSr3skJLIi2u-m5T9t3gNEjjXdN__c4yJhhN0CyzuDsFltKUFfBDt2qEJ/pub?embedded=true"
+    ETHICS_AGREEMENT_LINK = "https://docs.google.com/document/d/e/2PACX-1vT2yGXStletU0XGL6DaA45tSr3skJLIi2u-m5T9t3gNEjjXdN__c4yJhhN0CyzuDsFltKUFfBDt2qEJ/pub?embedded=true"

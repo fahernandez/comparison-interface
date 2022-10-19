@@ -29,7 +29,7 @@ def register_user():
         Response: Redirects to the item selection.
     """
     session.clear()
-    
+
     if request.method == 'GET':
         # Load the configuration
         s = WebSiteSetup(current_app)
@@ -57,7 +57,8 @@ def register_user():
         user_components.append(render_template('component/group.html', **{
             'groups':groups,
             'label': labels[WebSiteSetup.LABEL_GROUP_QUESTION],
-            'multiple_selection': multiple_selection
+            'multiple_selection': multiple_selection,
+            'group_selection_error': labels[WebSiteSetup.LABEL_USER_REGISTER_GROUP_SELECTION_ERROR]
         }))
 
         # Render the whole template
@@ -75,7 +76,7 @@ def register_user():
 
         # Multiple group ids can be selected by the user
         group_ids = request.form.to_dict(flat=False)['group_ids']
-
+ 
         # Register the user in the database.
         # Some of the user fields were dynamically added so we are using SQLAlquemy
         # reflection functionality to insert them.

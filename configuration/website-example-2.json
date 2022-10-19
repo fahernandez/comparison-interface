@@ -107,6 +107,7 @@
             "groupQuestion": "Please select the area more recognizable for you.",
             "userRegisterFormTitle": "Register",
             "userRegisterButton": "Register",
+            "userRegisterGroupSelectionErr": "Please select at least one area.",
             "itemSelectionQuestion": "Do you know the region ",
             "itemSelectionYesButton": "Yes",
             "itemSelectionNoButton": "No",

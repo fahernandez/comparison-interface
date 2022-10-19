@@ -36,7 +36,7 @@ class Export:
                 data = m.query.all()
                 data_list = [item.as_dict() for item in data]
                 df = pd.DataFrame(data_list)
-                df.to_excel(writer,m.__tablename__)
+                df.to_excel(writer,m.__tablename__,index=False)
         
             # The user model needs to be accessed manually due the dynamics fields
             db_engine = db.get_engine()
@@ -54,4 +54,4 @@ class Export:
                 df = pd.concat([df, row], ignore_index=True)
 
             # Write the user results
-            df.to_excel(writer,'user')
+            df.to_excel(writer,'user',index=False)

@@ -39,6 +39,7 @@ class Setup:
     LABEL_SITE_HOME_LABEL = "websitehome"
     LABEL_USER_REGISTER_FORM_TITLE = "userRegisterFormTitle"
     LABEL_USER_REGISTER_BUTTON = "userRegisterButton"
+    LABEL_USER_REGISTER_GROUP_SELECTION_ERROR = "userRegisterGroupSelectionErr"
     LABEL_ITEM_SELECTION_QUESTION = "itemSelectionQuestion"
     LABEL_ITEM_SELECTION_YES_BUTTON = "itemSelectionYesButton"
     LABEL_ITEM_SELECTION_NO_BUTTON = "itemSelectionNoButton"
@@ -49,7 +50,7 @@ class Setup:
     LABEL_ITEM_REJUDGE_BUTTON = "itemRejudgeButton"
     LABEL_ITEM_CONFIRMED_BUTTON = "itemConfirmedButton"
     LABEL_ITEM_SKIPPED_BUTTON = "itemSkippedButton"
-    LABEL_TIGHT_SELECTION_LABEL = "tightSelectionIndicatorLabel"
+    LABEL_TIED_SELECTION_LABEL = "tiedSelectionIndicatorLabel"
 
     def __init__(self, app) -> None:
         self.app = app

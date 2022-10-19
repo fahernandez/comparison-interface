@@ -610,6 +610,7 @@
             "groupQuestion": "Which of these boroughs are you familiar with?",
             "userRegisterFormTitle": "Register",
             "userRegisterButton": "Register",
+            "userRegisterGroupSelectionErr": "Please select at least one area.",
             "itemSelectionQuestion": "Do you know the region ",
             "itemSelectionYesButton": "Yes",
             "itemSelectionNoButton": "No",
