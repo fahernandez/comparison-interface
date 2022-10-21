@@ -16,7 +16,7 @@
           <h4 style="font-weight: bold" class="d-none d-md-block d-lg-block d-xl-block">{{comparison_number_label}}:&nbsp;{{comparison_number}}.&nbsp;{{skipped_number_label}}:&nbsp;{{skipped_number}}</h3>
           <!-- only mobile -->
           <h5 class="d-block d-md-none d-lg-none d-xl-none">{{comparison_intruction_label}}</h5>
-          <h6 style="font-weight: bold" class="d-block d-md-none d-lg-none d-xl-none">{{comparison_number_label}}{{comparison_number}}.&nbsp;{{skipped_number_label}}{{skipped_number}}</h5>
+          <h6 style="font-weight: bold" class="d-block d-md-none d-lg-none d-xl-none">{{comparison_number_label}}:&nbsp;{{comparison_number}}.&nbsp;{{skipped_number_label}}:&nbsp;{{skipped_number}}</h5>
         </div>
       <div class="row pl-2 pr-2">
         <div class="col p-2">
@@ -44,30 +44,29 @@
       </div>
       <!-- only desktop -->
       <div class="d-none d-md-block d-lg-block d-xl-block row pl-2 pr-2">
-        <div class="control-block-shorter col p-2 text-left">
+        <div class="control-block-shorter col p-2 text-right">
           <button id="previous-button" type="submit" name='state' value='{{rejudge_value}}' style="width:200px" class="btn btn-lg btn-secondary {% if can_redjudge %}{% else %}disabled{% endif %}" {% if can_redjudge %}{% else %}disabled{% endif %}>{{rejudge_label}}</button>
         </div>
         <div class="control-block-shorter col p-2 text-center">
           <button id="confirm-button-d" type="submit" name='state' value='{{confirmed_value}}' style="width:200px" class="btn btn-lg btn-primary disabled" disabled>{{confirmed_label}}</button>
         </div>
-        <div class="control-block-shorter col p-2 text-right">
+        <div class="control-block-shorter col p-2 text-left">
           <button id="skip-button" type="submit" name='state' value='{{skipped_value}}' style="width:200px" class="btn btn-lg btn-secondary">{{skipped_label}}</button>
         </div>
       </div>
       <!-- only mobile -->
       <div class="d-block d-md-none d-lg-none d-xl-none row pl-2 pr-2 fix-control-mobile-share">
-        <div class="control-block-shorter col p-2 text-left">
+        <div class="control-block-shorter col p-2 text-right">
           <button id="previous-button" type="submit" name='state' value='{{rejudge_value}}' style="min-width:100px" class="btn btn-lg btn-secondary {% if can_redjudge %}{% else %}disabled{% endif %}" {% if can_redjudge %}{% else %}disabled{% endif %}>{{rejudge_label}}</button>
         </div>
         <div class="control-block-shorter col p-2 text-center">
           <button id="confirm-button-m" type="submit" name='state' value='{{confirmed_value}}' style="min-width:100px" class="btn btn-lg btn-primary disabled" disabled>{{confirmed_label}}</button>
         </div>
-        <div class="control-block-shorter col p-2 text-right">
+        <div class="control-block-shorter col p-2 text-left">
           <button id="skip-button" type="submit" name='state' value='{{skipped_value}}' style="min-width:100px" class="btn btn-lg btn-secondary">{{skipped_label}}</button>
         </div>
       </div>
     </div>
   </form>
 </div>
-
 {% endblock %}

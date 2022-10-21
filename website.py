@@ -1,11 +1,8 @@
-"""Initial website script. This function are called after command
-export FLASK_APP=website
-flask run
-"""
+"""Initialize the website application"""
 import os
-from flask import Flask, render_template
-from flask import current_app
+from flask import Flask, render_template, current_app, session
 from datetime import datetime as dt
+from datetime import timedelta
 from whitenoise import WhiteNoise
 import os
 # Custom libraries
@@ -14,6 +11,7 @@ from configuration.website import Settings as WebSiteSettings
 from model.connection import db
 from model.schema import WebsiteControl
 import command, view
+
 
 def create_app(test_config=None):
     """Start Flask website application
@@ -44,7 +42,7 @@ def create_app(test_config=None):
     app.register_blueprint(view.blueprint)
     
     # Register function executed before any request to validate the app integrity.
-    app.before_request(validate_app_itegrity)
+    app.before_request(before_request)
     
     # Register page errors
     app.register_error_handler(404, page_not_found)
@@ -61,6 +59,18 @@ def create_app(test_config=None):
     )
 
     return app
+
+def before_request():
+    """Executes a series of procedures before every request."""
+    validate_app_itegrity()
+    configure_user_session()
+
+def configure_user_session():
+    """Configure the user's session behavior"""
+    app = current_app
+    session.permanent  = True
+    app.permanent_session_lifetime = timedelta(minutes=app.config['SESSION_MINUTES_VALIDITY'])
+    session.modified = True
 
 def validate_app_itegrity():
     """Stop the server execution if the configuration file was modified after the
@@ -105,6 +115,6 @@ def page_unexpected_condition(e):
     """Return 500 page"""
     return render_template('500.html', **WebSiteSettings.get_layout_text(current_app)), 500
 
-# Create the Flask application
+# Make the app global available
 app = create_app()
     

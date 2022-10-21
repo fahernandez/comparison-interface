@@ -70,9 +70,10 @@ def user_registration():
     Returns:
         Response: Redirects to the item selection.
     """
-    session.clear()
+    if __valid_session(session):
+        return redirect(url_for('.item_selection'))
+    
     app = current_app
-
     if request.method == 'GET':
         # Load user fields
         user_fields = WebSiteSettings.get_user_conf(app)
@@ -174,15 +175,15 @@ def item_selection():
         proccesed. After all items were specify, the method redirects
         to the comparison itself.
     """
-    response = __validate_session(session)
     app = current_app
-    if response:
-        return response
+    if not __valid_session(session):
+        return redirect(url_for('.user_registration'))
     
     # The item selection won't be allow if:
     # 1. Manual weights were defined.
     # 2. The user explicitly configured the website to not render this section.
     render_item_preference = WebSiteSettings.shoud_render(WebSiteSettings.BEHAVIOUR_RENDER_USER_ITEM_PREFERENCE_PAGE, app)
+
     if not session['weight_conf'] == WebsiteControl.EQUAL_WEIGHT or \
         not render_item_preference:
         return redirect(url_for('.rank'))
@@ -262,10 +263,10 @@ def rank():
     CONFIRMED = 'confirmed'
     SKIPPED = 'skipped'
 
-    response = __validate_session(session)
-    if response:
-        return response
     app = current_app
+    if not __valid_session(session):
+        return redirect(url_for('.user_registration'))
+
     # Get the items used to make the comparative judgement
     if request.method == 'GET':
         comparison_id = None
@@ -502,7 +503,7 @@ def __get_items_to_compare(app, comparison_id=None):
         result = db.session.query(UserItem, Item).\
             join(Item, Item.item_id == UserItem.item_id, isouter = True).\
             where(
-                UserGroup.user_id == session['user_id'],
+                UserItem.user_id == session['user_id'],
                 UserItem.known == 1
             ).all()
         
@@ -555,13 +556,12 @@ def __get_items_to_compare(app, comparison_id=None):
    
 
 
-def __validate_session(session):
-    """Validate the user session integrity
+def __valid_session(session):
+    """Verify if the user session is valid.
 
-    Returns:
-        Response object: Redirect the user to the user registration secton
+    Returns: True when the user session is valid. False in other case.
     """
 
     if not "user_id" in session or not "group_ids" in session:
-        return redirect(url_for('.user_registration'))
-    return None
+        return False
+    return True
