@@ -32,6 +32,8 @@
 
 .full-height-iframe {
     height:85vh;
+    overflow: auto;
+    scroll-behavior: auto;
 }
   
 .doc-content {
