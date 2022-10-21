@@ -1,0 +1,650 @@
+{
+    "behaviorConfiguration": {
+      "exportPathLocation":"tmp/export.xlsx",
+      "renderUserItemPreferencePage": "false",
+      "renderUserInstructionPage": "true",
+      "renderEthicsAgreementPage": "true",
+      "userInstructionLink": "https://docs.google.com/document/d/e/2PACX-1vT8_hIsUPqm140M_3Y_gI1lNyQoFRwHWoUMoQZfzbny2wQ25exKlHUOkfY5rb1MEueZmIPe4R3I_4YB/pub?embedded=true",
+      "userEthicsAgreementLink": "https://docs.google.com/document/d/e/2PACX-1vQEjsXL0-fx905P6t1yxashOORcQvnsA5stifNaNLqEsHKz-It3AvfBlGVnUENObA0LmogbQQzrFUzp/pub?embedded=true"
+    },
+    "comparisonConfiguration" : {
+        "weightConfiguration": "equal",
+        "groups": [
+            {
+                "name": "Sheffield",
+                "displayName": "Sheffield",
+                "items":[
+                  {  
+                    "name": "Beauchief and Greenhill",
+                    "displayName": "Beauchief and Greenhill",
+                    "imageName": "Beauchief and Greenhill.png"
+                  },
+                  {
+                    "name": "Beighton",
+                    "displayName": "Beighton",
+                    "imageName": "Beighton.png"
+                  },
+                  {
+                    "name": "Birley",
+                    "displayName": "Birley",
+                    "imageName": "Birley.png"
+                  },
+                  {
+                    "name": "Broomhill and Sharrow Vale",
+                    "displayName": "Broomhill and Sharrow Vale",
+                    "imageName": "Broomhill and Sharrow Vale.png"
+                  },
+                  {
+                    "name": "Burngreave",
+                    "displayName": "Burngreave",
+                    "imageName": "Burngreave.png"
+                  },
+                  {
+                    "name": "City",
+                    "displayName": "City",
+                    "imageName": "City.png"
+                  },
+                  {
+                    "name": "Crookes and Crosspool",
+                    "displayName": "Crookes and Crosspool",
+                    "imageName": "Crookes and Crosspool.png"
+                  },
+                  {
+                    "name": "Darnall",
+                    "displayName": "Darnall",
+                    "imageName": "Darnall.png"
+                  },
+                  {
+                    "name": "Dore and Totley",
+                    "displayName": "Dore and Totley",
+                    "imageName": "Dore and Totley.png"
+                  },
+                  {
+                    "name": "East Ecclesfield",
+                    "displayName": "East Ecclesfield",
+                    "imageName": "East Ecclesfield.png"
+                  },
+                  {
+                    "name": "Ecclesall",
+                    "displayName": "Ecclesall",
+                    "imageName": "Ecclesall.png"
+                  },
+                  {
+                    "name": "Firth Park",
+                    "displayName": "Firth Park",
+                    "imageName": "Firth Park.png"
+                  },
+                  {
+                    "name": "Fulwood",
+                    "displayName": "Fulwood",
+                    "imageName": "Fulwood.png"
+                  },
+                  {
+                    "name": "Gleadless Valley",
+                    "displayName": "Gleadless Valley",
+                    "imageName": "Gleadless Valley.png"
+                  },
+                  {
+                    "name": "Graves Park",
+                    "displayName": "Graves Park",
+                    "imageName": "Graves Park.png"
+                  },
+                  {
+                    "name": "Hillsborough",
+                    "displayName": "Hillsborough",
+                    "imageName": "Hillsborough.png"
+                  },
+                  {
+                    "name": "Manor Castle",
+                    "displayName": "Manor Castle",
+                    "imageName": "Manor Castle.png"
+                  },
+                  {
+                    "name": "Mosborough",
+                    "displayName": "Mosborough",
+                    "imageName": "Mosborough.png"
+                  },
+                  {
+                    "name": "Nether Edge and Sharrow",
+                    "displayName": "Nether Edge and Sharrow",
+                    "imageName": "Nether Edge and Sharrow.png"
+                  },
+                  {
+                    "name": "Park and Arbourthorne",
+                    "displayName": "Park and Arbourthorne",
+                    "imageName": "Park and Arbourthorne.png"
+                  },
+                  {
+                    "name": "Richmond",
+                    "displayName": "Richmond",
+                    "imageName": "Richmond.png"
+                  },
+                  {
+                    "name": "Shiregreen and Brightside",
+                    "displayName": "Shiregreen and Brightside",
+                    "imageName": "Shiregreen and Brightside.png"
+                  },
+                  {
+                    "name": "Southey",
+                    "displayName": "Southey",
+                    "imageName": "Southey.png"
+                  },
+                  {
+                    "name": "Stannington",
+                    "displayName": "Stannington",
+                    "imageName": "Stannington.png"
+                  },
+                  {
+                    "name": "Stocksbridge and Upper Don",
+                    "displayName": "Stocksbridge and Upper Don",
+                    "imageName": "Stocksbridge and Upper Don.png"
+                  },
+                  {
+                    "name": "Walkley",
+                    "displayName": "Walkley",
+                    "imageName": "Walkley.png"
+                  },
+                  {
+                    "name": "West Ecclesfield",
+                    "displayName": "West Ecclesfield",
+                    "imageName": "West Ecclesfield.png"
+                  },
+                  {
+                    "name": "Woodhouse",
+                    "displayName": "Woodhouse",
+                    "imageName": "Woodhouse.png"
+                  },
+                  {
+                    "name": "Penistone West",
+                    "displayName": "Penistone West",
+                    "imageName": "Penistone West.png"
+                  },
+                  {
+                    "name": "Keppel",
+                    "displayName": "Keppel",
+                    "imageName": "Keppel.png"
+                  },
+                  {
+                    "name": "Rotherham West",
+                    "displayName": "Rotherham West",
+                    "imageName": "Rotherham West.png"
+                  },
+                  {
+                    "name": "Brinsworth",
+                    "displayName": "Brinsworth",
+                    "imageName": "Brinsworth.png"
+                  },
+                  {
+                    "name": "Aughton & Swallownest",
+                    "displayName": "Aughton & Swallownest",
+                    "imageName": "Aughton & Swallownest.png"
+                  }
+                ] 
+            },
+            {
+                "name": "Barnsley",
+                "displayName": "Barnsley",
+                "items":[
+                    {
+                    "name": "Central",
+                    "displayName": "Central",
+                    "imageName": "Central.png"
+                  },
+                  {
+                    "name": "Cudworth",
+                    "displayName": "Cudworth",
+                    "imageName": "Cudworth.png"
+                  },
+                  {
+                    "name": "Darfield",
+                    "displayName": "Darfield",
+                    "imageName": "Darfield.png"
+                  },
+                  {
+                    "name": "Darton East",
+                    "displayName": "Darton East",
+                    "imageName": "Darton East.png"
+                  },
+                  {
+                    "name": "Darton West",
+                    "displayName": "Darton West",
+                    "imageName": "Darton West.png"
+                  },
+                  {
+                    "name": "Dearne North",
+                    "displayName": "Dearne North",
+                    "imageName": "Dearne North.png"
+                  },
+                  {
+                    "name": "Dearne South",
+                    "displayName": "Dearne South",
+                    "imageName": "Dearne South.png"
+                  },
+                  {
+                    "name": "Dodworth",
+                    "displayName": "Dodworth",
+                    "imageName": "Dodworth.png"
+                  },
+                  {
+                    "name": "Hoyland Milton",
+                    "displayName": "Hoyland Milton",
+                    "imageName": "Hoyland Milton.png"
+                  },
+                  {
+                    "name": "Kingstone",
+                    "displayName": "Kingstone",
+                    "imageName": "Kingstone.png"
+                  },
+                  {
+                    "name": "Monk Bretton",
+                    "displayName": "Monk Bretton",
+                    "imageName": "Monk Bretton.png"
+                  },
+                  {
+                    "name": "North East",
+                    "displayName": "North East",
+                    "imageName": "North East.png"
+                  },
+                  {
+                    "name": "Old Town",
+                    "displayName": "Old Town",
+                    "imageName": "Old Town.png"
+                  },
+                  {
+                    "name": "Penistone East",
+                    "displayName": "Penistone East",
+                    "imageName": "Penistone East.png"
+                  },
+                  {
+                    "name": "Penistone West",
+                    "displayName": "Penistone West",
+                    "imageName": "Penistone West.png"
+                  },
+                  {
+                    "name": "Rockingham",
+                    "displayName": "Rockingham",
+                    "imageName": "Rockingham.png"
+                  },
+                  {
+                    "name": "Royston",
+                    "displayName": "Royston",
+                    "imageName": "Royston.png"
+                  },
+                  {
+                    "name": "St Helens",
+                    "displayName": "St Helens",
+                    "imageName": "St Helens.png"
+                  },
+                  {
+                    "name": "Stairfoot",
+                    "displayName": "Stairfoot",
+                    "imageName": "Stairfoot.png"
+                  },
+                  {
+                    "name": "Wombwell",
+                    "displayName": "Wombwell",
+                    "imageName": "Wombwell.png"
+                  },
+                  {
+                    "name": "Worsbrough",
+                    "displayName": "Worsbrough",
+                    "imageName": "Worsbrough.png"
+                  },
+                  {
+                    "name": "Stocksbridge and Upper Don",
+                    "displayName": "Stocksbridge and Upper Don",
+                    "imageName": "Stocksbridge and Upper Don.png"
+                  },
+                  {
+                    "name": "Hoober",
+                    "displayName": "Hoober",
+                    "imageName": "Hoober.png"
+                  },
+                  {
+                    "name": "Wath",
+                    "displayName": "Wath",
+                    "imageName": "Wath.png"
+                  },
+                  {
+                    "name": "Sprotbrough",
+                    "displayName": "Sprotbrough",
+                    "imageName": "Sprotbrough.png"
+                  },
+                  {
+                    "name": "Swinton Rockingham",
+                    "displayName": "Swinton Rockingham",
+                    "imageName": "Swinton Rockingham.png"
+                  }
+                ] 
+            },
+            {
+                "name": "Rotherham",
+                "displayName": "Rotheram",
+                "items":[
+                  {
+                    "name": "Anston & Woodsetts",
+                    "displayName": "Anston & Woodsetts",
+                    "imageName": "Anston & Woodsetts.png"
+                  },
+                  {
+                    "name": "Aston & Todwick",
+                    "displayName": "Aston & Todwick",
+                    "imageName": "Aston & Todwick.png"
+                  },
+                  {
+                    "name": "Aughton & Swallownest",
+                    "displayName": "Aughton & Swallownest",
+                    "imageName": "Aughton & Swallownest.png"
+                  },
+                  {
+                    "name": "Boston Castle",
+                    "displayName": "Boston Castle",
+                    "imageName": "Boston Castle.png"
+                  },
+                  {
+                    "name": "Bramley & Ravenfield",
+                    "displayName": "Bramley & Ravenfield",
+                    "imageName": "Bramley & Ravenfield.png"
+                  },
+                  {
+                    "name": "Brinsworth",
+                    "displayName": "Brinsworth",
+                    "imageName": "Brinsworth.png"
+                  },
+                  {
+                    "name": "Dalton & Thrybergh",
+                    "displayName": "Dalton & Thrybergh",
+                    "imageName": "Dalton & Thrybergh.png"
+                  },
+                  {
+                    "name": "Dinnington",
+                    "displayName": "Dinnington",
+                    "imageName": "Dinnington.png"
+                  },
+                  {
+                    "name": "Greasbrough",
+                    "displayName": "Greasbrough",
+                    "imageName": "Greasbrough.png"
+                  },
+                  {
+                    "name": "Hellaby & Maltby West",
+                    "displayName": "Hellaby & Maltby West",
+                    "imageName": "Hellaby & Maltby West.png"
+                  },
+                  {
+                    "name": "Hoober",
+                    "displayName": "Hoober",
+                    "imageName": "Hoober.png"
+                  },
+                  {
+                    "name": "Keppel",
+                    "displayName": "Keppel",
+                    "imageName": "Keppel.png"
+                  },
+                  {
+                    "name": "Kilnhurst & Swinton East",
+                    "displayName": "Kilnhurst & Swinton East",
+                    "imageName": "Kilnhurst & Swinton East.png"
+                  },
+                  {
+                    "name": "Maltby East",
+                    "displayName": "Maltby East",
+                    "imageName": "Maltby East.png"
+                  },
+                  {
+                    "name": "Rawmarsh East",
+                    "displayName": "Rawmarsh East",
+                    "imageName": "Rawmarsh East.png"
+                  },
+                  {
+                    "name": "Rawmarsh West",
+                    "displayName": "Rawmarsh West",
+                    "imageName": "Rawmarsh West.png"
+                  },
+                  {
+                    "name": "Rother Vale",
+                    "displayName": "Rother Vale",
+                    "imageName": "Rother Vale.png"
+                  },
+                  {
+                    "name": "Rotherham East",
+                    "displayName": "Rotherham East",
+                    "imageName": "Rotherham East.png"
+                  },
+                  {
+                    "name": "Rotherham West",
+                    "displayName": "Rotherham West",
+                    "imageName": "Rotherham West.png"
+                  },
+                  {
+                    "name": "Sitwell",
+                    "displayName": "Sitwell",
+                    "imageName": "Sitwell.png"
+                  },
+                  {
+                    "name": "Swinton Rockingham",
+                    "displayName": "Swinton Rockingham",
+                    "imageName": "Swinton Rockingham.png"
+                  },
+                  {
+                    "name": "Thurcroft & Wickersley South",
+                    "displayName": "Thurcroft & Wickersley South",
+                    "imageName": "Thurcroft & Wickersley South.png"
+                  },
+                  {
+                    "name": "Wales",
+                    "displayName": "Wales",
+                    "imageName": "Wales.png"
+                  },
+                  {
+                    "name": "Wath",
+                    "displayName": "Wath",
+                    "imageName": "Wath.png"
+                  },
+                  {
+                    "name": "Wickersley North",
+                    "displayName": "Wickersley North",
+                    "imageName": "Wickersley North.png"
+                  },
+                  {
+                    "name": "Beighton",
+                    "displayName": "Beighton",
+                    "imageName": "Beighton.png"
+                  },
+                  {
+                    "name": "Darnall",
+                    "displayName": "Darnall",
+                    "imageName": "Darnall.png"
+                  },
+                  {
+                    "name": "Hoyland Milton",
+                    "displayName": "Hoyland Milton",
+                    "imageName": "Hoyland Milton.png"
+                  },
+                  {
+                    "name": "Conisbrough",
+                    "displayName": "Conisbrough",
+                    "imageName": "Conisbrough.png"
+                  },
+                  {
+                    "name": "East Ecclesfield",
+                    "displayName": "East Ecclesfield",
+                    "imageName": "East Ecclesfield.png"
+                  }
+                ] 
+               },
+                {
+                "name": "Doncaster",
+                "displayName": "Doncaster",
+                "items":[
+                    {
+                        "name": "Adwick le Street & Carcroft",
+                        "displayName": "Adwick le Street & Carcroft",
+                        "imageName": "Adwick le Street & Carcroft.png"
+                    },
+                    {
+                        "name": "Armthorpe",
+                        "displayName": "Armthorpe",
+                        "imageName": "Armthorpe.png"
+                    },
+                    {
+                        "name": "Balby South",
+                        "displayName": "Balby South",
+                        "imageName": "Balby South.png"
+                    },
+                    {
+                        "name": "Bentley",
+                        "displayName": "Bentley",
+                        "imageName": "Bentley.png"
+                    },
+                    {
+                        "name": "Bessacarr",
+                        "displayName": "Bessacarr",
+                        "imageName": "Bessacarr.png"
+                    },
+                    {
+                        "name": "Conisbrough",
+                        "displayName": "Conisbrough",
+                        "imageName": "Conisbrough.png"
+                    },
+                    {
+                        "name": "Edenthorpe & Kirk Sandall",
+                        "displayName": "Edenthorpe & Kirk Sandall",
+                        "imageName": "Edenthorpe & Kirk Sandall.png"
+                    },
+                    {
+                        "name": "Edlington & Warmsworth",
+                        "displayName": "Edlington & Warmsworth",
+                        "imageName": "Edlington & Warmsworth.png"
+                    },
+                    {
+                        "name": "Finningley",
+                        "displayName": "Finningley",
+                        "imageName": "Finningley.png"
+                    },
+                    {
+                        "name": "Hatfield",
+                        "displayName": "Hatfield",
+                        "imageName": "Hatfield.png"
+                    },
+                    {
+                        "name": "Hexthorpe & Balby North",
+                        "displayName": "Hexthorpe & Balby North",
+                        "imageName": "Hexthorpe & Balby North.png"
+                    },
+                    {
+                        "name": "Mexborough",
+                        "displayName": "Mexborough",
+                        "imageName": "Mexborough.png"
+                    },
+                    {
+                        "name": "Norton & Askern",
+                        "displayName": "Norton & Askern",
+                        "imageName": "Norton & Askern.png"
+                    },
+                    {
+                        "name": "Roman Ridge",
+                        "displayName": "Roman Ridge",
+                        "imageName": "Roman Ridge.png"
+                    },
+                    {
+                        "name": "Rossington & Bawtry",
+                        "displayName": "Rossington & Bawtry",
+                        "imageName": "Rossington & Bawtry.png"
+                    },
+                    {
+                        "name": "Sprotbrough",
+                        "displayName": "Sprotbrough",
+                        "imageName": "Sprotbrough.png"
+                    },
+                    {
+                        "name": "Stainforth & Barnby Dun",
+                        "displayName": "Stainforth & Barnby Dun",
+                        "imageName": "Stainforth & Barnby Dun.png"
+                    },
+                    {
+                        "name": "Thorne & Moorends",
+                        "displayName": "Thorne & Moorends",
+                        "imageName": "Thorne & Moorends.png"
+                    },
+                    {
+                        "name": "Tickhill & Wadsworth",
+                        "displayName": "Tickhill & Wadsworth",
+                        "imageName": "Tickhill & Wadsworth.png"
+                    },
+                    {
+                        "name": "Town",
+                        "displayName": "Town",
+                        "imageName": "Town.png"
+                    },
+                    {
+                        "name": "Wheatley Hills & Intake",
+                        "displayName": "Wheatley Hills & Intake",
+                        "imageName": "Wheatley Hills & Intake.png"
+                    },
+                    {
+                        "name": "North East",
+                        "displayName": "North East",
+                        "imageName": "North East.png"
+                    },
+                    {
+                        "name": "Dearne North",
+                        "displayName": "Dearne North",
+                        "imageName": "Dearne North.png"
+                    },
+                    {
+                        "name": "Maltby East",
+                        "displayName": "Maltby East",
+                        "imageName": "Maltby East.png"
+                    },
+                    {
+                        "name": "Bramley & Ravenfield",
+                        "displayName": "Bramley & Ravenfield",
+                        "imageName": "Bramley & Ravenfield.png"
+                    },
+                    {
+                        "name": "Kilnhurst & Swinton East",
+                        "displayName": "Kilnhurst & Swinton East",
+                        "imageName": "Kilnhurst & Swinton East.png"
+                    }
+                ]
+            }
+        ]
+    },
+    "websiteTextConfiguration":  {
+        "websiteTitle": "Comparison Software",
+        "pageTitleLogout": "Logout",
+        "pageTitleUserRegistration": "User Registration",
+        "pageTitleEthicsAgreement": "Ethics Agreement",
+        "pageTitleIntroduction": "Introduction",
+        "pageTitleItemPreference": "Item Preference Selection",
+        "pageTitleRank": "Items Rank",
+        "userRegistrationGroupQuestionLabel": "Which of these boroughs are you familiar with?",
+        "userRegistrationFormTitleLabel": "Register",
+        "userRegistrationSummitButtonLabel": "Register",
+        "userRegistrationGroupSelectionErr": "Please select at least one area.",
+        "userRegistrationEthicsAgreementLabel": "I confirm that I have read the privacy notice and consent to taking part in this survey.",
+        "itemSelectionQuestionLabel": "Do you know the region",
+        "itemSelectionYesButtonLabel": "Yes",
+        "itemSelectionNoButtonLabel": "No",
+        "itemSelectedIndicatorLabel": "HIGHER",
+        "rankItemTiedSelectionIndicatorLabel": "EQUAL",
+        "rankItemItemRejudgeButtonLabel": "Previous",
+        "rankItemConfirmedButtonLabel": "Confirm",
+        "rankItemSkippedButtonLabel": "Skip",
+        "rankItemInstructionLabel": "Click the region that has the higher rate of FGM, then click on the blue confirm button.",
+        "rankItemComparisonExecutedLabel": "Compared",
+        "rankItemSkippedComparisonExecutedLabel": "Skipped",
+        "introductionContinueButtonLabel": "Continue",
+        "ethicsAgreementBackButtonLabel": "Back"
+    },
+    "userFieldsConfiguration": [
+        {
+            "name": "statutory",
+            "displayName": "Do you work for a statutory body?",
+            "type": "radio",
+            "option": ["Yes", "No", "Other", "Prefer not to say"],
+            "required": "true"
+        }
+    ]
+}
