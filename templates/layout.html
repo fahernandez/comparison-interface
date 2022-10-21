@@ -7,28 +7,39 @@
     <meta name="author" content="">
     <link rel="icon" href="../../../../favicon.ico">
 
-    <title>{{ config['WEBSITE_TITLE'] }}{% block title %}{% endblock %}</title>
+    <title>{{ website_title }}{% block title %}{% endblock %}</title>
 
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/custom-style.css') }}">
     {% block css %}{% endblock %}
     
   </head>
 
   <body>
     <nav class="navbar navbar-expand-md navbar-dark bg-dark">
-      <a class="navbar-brand" href="#">{{ config['WEBSITE_TITLE'] }}</a>
+      <a class="navbar-brand" href="#">{{ website_title }}</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
 
       <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav ml-auto">
+          {% if render_user_instructions %}
           <li class="nav-item active">
-            <a class="nav-link" href="/">{{home_label}}</a>
+            <a class="nav-link" href="{{ url_for('views.introduction') }}">{{introduction_page_title}}</a>
+          </li>
+          {% endif %}
+          {% if render_user_ethics_agreement %}
+          <li class="nav-item active">
+            <a class="nav-link" href="{{ url_for('views.ethics_agreement') }}">{{ethics_agreement_page_title}}</a>
+          </li>
+          {% endif %}
+          <li class="nav-item active">
+            <a class="nav-link" href="{{ url_for('views.user_registration') }}">{{user_registration_page_title}}</a>
           </li>
           <li class="nav-item active">
-            <a class="nav-link" href="/logout">{{logout}}</a>
+            <a class="nav-link" href="{{ url_for('views.logout') }}">{{logout_page_title}}</a>
           </li>
         </ul>
       </div>
@@ -43,6 +54,9 @@
     <script src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/jquery.zoom.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/src/iframe-change.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/src/user-registry-validation.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/src/rank-control.js') }}"></script>
     {% block js %}{% endblock %}
   </body>
 </html>

@@ -2,13 +2,14 @@
 Script to generate images used on the comparative judgment procedure.
 These images are generated using as based a .shp file. This script
 extract each of the regions from the shape file and create an image stored
-on website/static/image/. The script will require the presence of files:
+on static/image/. The script will require the presence of files:
 -regions.shp
 -regions.cpg
 -regions.prj
 -regions.shx
 -regions.dbf
 -regions.xml
+Use: >python shp_to_image.py {location_to_the_shape_folder}
 """
 import os
 import shutil
@@ -18,13 +19,55 @@ import contextily as ctx
 import matplotlib.pyplot as plt
 from tqdm.contrib.concurrent import process_map
 
+def load_shapefile(args):
+    """Load the shapefile used to extract the images used on the comparative judgement procedure.
+
+    Args:
+        args (dict): options used to parse the shp file
+
+    Returns:
+        pandas: pandas dataframe containing the shp file structure
+    """
+    print('Loading Shapefile')
+    try:
+        df = gpd.read_file(args.shapefile)
+        df = df.to_crs(epsg=3857)
+    except Exception as e:
+        print(e)
+        exit()
+        
+    # Identify geometry column which must exists and be unique
+    col_geom = df.select_dtypes(include=['geometry']).columns
+    assert len(col_geom) == 1
+    col_geom = col_geom[0]
+
+    # Choose ID column
+    print(
+        '\nYou need to choose a column as unique identifier of your items, potential candidates are:'
+    )
+    col_idx = None
+    while col_idx is None:
+        col_idx = choose_column(df)
+
+    print('\n\n\nSummary of selected columns:')
+    print('\t[ID] {}'.format(col_idx))
+    print('\t[Geometry] {}'.format(col_geom))
+
+    # df.set_index(col_idx, inplace=True)
+    df.rename(columns={col_idx: 'chosen_id'}, inplace=True)
+    df.reset_index(inplace=True)
+    df.index = df.index + 1
+
+    return df[['chosen_id', col_geom]]
 
 def choose_column(df):
-    """
-    Select candidates columns from the shp files to use as items descriptors.
-    :type df: pandas dataframe
-    :param df: DataFrame containing the shape object
-    :return: Column manually selected by the website configurator. None on error.
+    """Select candidates columns from the shp files to use as items descriptors.
+
+    Args:
+        df (dataframe): DataFrame containing the shape object
+
+    Returns:
+        list: Column manually selected by the website configurator. None on error.
     """
     id_candidates = df.select_dtypes(exclude=['geometry']).columns
     id_candidates = [x for x in id_candidates if df[x].is_unique]
@@ -48,57 +91,11 @@ def choose_column(df):
 
     return None
 
-
-def load_shapefile(args):
-    """
-    Load the shapefile used to extract the images used on the comparative
-    judgement procedure.
-    :param args: options used to parse the shp file
-    :return: pandas dataframe containing the shp file structure
-    """
-    print('Loading Shapefile')
-    df = gpd.read_file(args.shapefile)
-    df = df.to_crs(epsg=3857)
-
-    # Identify geometry column which must exists and be unique
-    col_geom = df.select_dtypes(include=['geometry']).columns
-    assert len(col_geom) == 1
-    col_geom = col_geom[0]
-
-    # Choose ID column
-    print(
-        '\nYou need to choose a column as unique identifier of your items, potential candidates are:'
-    )
-    col_idx = None
-    while col_idx is None:
-        col_idx = choose_column(df)
-
-    # Choose label column
-    print(
-        '\n\n\nYou need to choose a column containing the label / name of each item, potential candidates are:'
-    )
-    col_label = None
-    while col_label is None:
-        col_label = choose_column(df)
-
-    print('\n\n\nSummary of selected columns:')
-    print('\t[ID] {}'.format(col_idx))
-    print('\t[Label] {}'.format(col_label))
-    print('\t[Geometry] {}'.format(col_geom))
-
-    # df.set_index(col_idx, inplace=True)
-    df.rename(columns={col_idx: 'chosen_id', col_label: 'name'}, inplace=True)
-    df.reset_index(inplace=True)
-    df.index = df.index + 1
-
-    return df[['chosen_id', 'name', col_geom]]
-
-
 def generate_item_images(df_row):
-    """
-    Generate the images used on the comparative judgement from the shapefile.
-    :param df_row:
-    :return:
+    """Generate the images used on the comparative judgement from the shapefile.
+
+    Args:
+        df_row (PandasRow): each of the items to be compared.
     """
     row = df_row.iloc[0]
     (minx, miny, maxx, maxy) = row.geometry.bounds
@@ -126,13 +123,20 @@ def generate_item_images(df_row):
                     attribution='')
     plt.axis('off')
 
-    plt.savefig(f'../website/static/image/item_{df_row.index.to_list()[0]}.png',
+    plt.savefig(f'{abs_image_path}/item_{df_row.index.to_list()[0]}.png',
                 dpi=200,
                 bbox_inches='tight',
                 pad_inches=0)
 
     plt.close(fig)
 
+def get_image_path():
+    """Return the absolute path of the image folder
+
+    Returns:
+        string: Absolute image folder path
+    """
+    return os.path.abspath(os.path.dirname(__file__)) + "/../static/image"
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
@@ -147,12 +151,14 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     print('\n\n\n')
+    abs_image_path = get_image_path()
 
     # Create output directory
-    if os.path.exists('../website/static/image'):
+    if os.path.exists(abs_image_path):
         # TODO Add warning / confirmation about emptying folder
-        shutil.rmtree('../website/static/image')
-    os.mkdir('../website/static/image')
+        shutil.rmtree(abs_image_path)
+
+    os.mkdir(abs_image_path)
 
     # Load Shapefile
     df = load_shapefile(args)

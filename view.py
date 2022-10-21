@@ -12,42 +12,78 @@ from numpy.random import choice
 from model.connection import db
 from model.schema import (User, Group, UserItem, Item, Comparison, WebsiteControl, 
     UserGroup, CustomItemPair, ItemGroup)
-from configuration.website import Setup as WebSiteSetup
+from configuration.website import Settings as WebSiteSettings
 
 blueprint = Blueprint('views', __name__)
 
+@blueprint.route('/introduction', methods=['GET'])
+def introduction():
+    """Render the introduction page. This page contains an inframe
+    with a link to a google doc with the webpage usage introductions.
+
+    Raises:
+        RuntimeError: When the page request methods hasn't been implemented yet.
+
+    Returns:
+        Response: Renders the introduction page.
+    """
+    app = current_app
+    if request.method == 'GET':
+        # Render the introduction page
+        return render_template('page/introduction.html', **{**{
+            'user_instruction_link': WebSiteSettings.get_behavior_conf(WebSiteSettings.BEHAVIOUR_USER_INSTRUCTION_LINK, app),
+            'introduction_continue_button': WebSiteSettings.get_text(WebSiteSettings.LABEL_INTRODUCTION_CONTINUE_BUTTON_LABEL, app)
+        },**WebSiteSettings.get_layout_text(app)})
+        
+    raise RuntimeError("Method not implemented")
+
+@blueprint.route('/ethics-agreement', methods=['GET'])
+def ethics_agreement():
+    """Render the ethics agreement page. This page containcts an inframe
+    with a link to a google doc with the ethics agreement.
+
+    Raises:
+        RuntimeError: When the page request methods hasn't been implemented yet.
+
+    Returns:
+        Response: Renders the ethics agreement page.
+    """
+    app = current_app
+    if request.method == 'GET':
+        # Render the introduction page
+        return render_template('page/ethics.html', **{**{
+            'ethics_agreement_link': WebSiteSettings.get_behavior_conf(WebSiteSettings.BEHAVIOUR_ETHICS_AGREEMENT_LINK, app),
+            'ethics_agreement_back_button': WebSiteSettings.get_text(WebSiteSettings.LABEL_ETHICS_AGREEMENT_BACK_BUTTON_LABEL, app)
+        },**WebSiteSettings.get_layout_text(app)})
+
+    raise RuntimeError("Method not implemented")
+
 @blueprint.route('/', methods=['GET', 'POST'])
 @blueprint.route('/register', methods=['GET', 'POST'])
-def register_user():
+def user_registration():
     """Register the user doing the comparative judgment.
 
     Raises:
-        RuntimeError: When the method was called without GET/POST
+        RuntimeError: When the page request methods hasn't been implemented yet.
         RuntimeError: When there were an error registring the user
 
     Returns:
         Response: Redirects to the item selection.
     """
     session.clear()
+    app = current_app
 
     if request.method == 'GET':
-        # Load the configuration
-        s = WebSiteSetup(current_app)
-        conf = s.load()
-        
         # Load user fields
-        user_fields = conf[WebSiteSetup.WEBSITE_CONFIGURATION][WebSiteSetup.WEBSITE_USER_FIELDS]
+        user_fields = WebSiteSettings.get_user_conf(app)
         user_components = []
         
-        # Load form labels
-        labels = conf[WebSiteSetup.WEBSITE_CONFIGURATION][WebSiteSetup.WEBSITE_LABEL]
-
         # Add the custom user fields
         for field in user_fields:
-            component = 'component/{}.html'.format(field[WebSiteSetup.USER_FIELD_TYPE])
+            component = 'component/{}.html'.format(field[WebSiteSettings.USER_FIELD_TYPE])
             user_components.append(render_template(component, **field))
         
-        # Allow multiple item selection only the weight distribution is "equal"
+        # Allow multiple item selection only if the item's weight distribution is "equal"
         multiple_selection = False
         if WebsiteControl().get_conf().weight_configuration == WebsiteControl.EQUAL_WEIGHT:
             multiple_selection = True
@@ -56,17 +92,24 @@ def register_user():
         groups = Group.query.all()
         user_components.append(render_template('component/group.html', **{
             'groups':groups,
-            'label': labels[WebSiteSetup.LABEL_GROUP_QUESTION],
+            'label': WebSiteSettings.get_text(WebSiteSettings.USER_REGISTRATION_GROUP_QUESTION_LABEL, app),
             'multiple_selection': multiple_selection,
-            'group_selection_error': labels[WebSiteSetup.LABEL_USER_REGISTER_GROUP_SELECTION_ERROR]
+            'group_selection_error': WebSiteSettings.get_text(WebSiteSettings.USER_REGISTRATION_GROUP_SELECTION_ERROR, app)
         }))
+        
+        # Add the ethics component
+        render_ethics = WebSiteSettings.shoud_render(WebSiteSettings.BEHAVIOUR_RENDER_ETHICS_AGREEMENT_PAGE, app)
+        if render_ethics:
+            user_components.append(render_template('component/ethics.html', **{
+                'ethics_agreement_label': WebSiteSettings.get_text(WebSiteSettings.USER_REGISTRATION_ETHICS_AGREEMENT_LABEL, app)
+            }))
 
         # Render the whole template
         return render_template('page/register.html', **{**{
-            'title': labels[WebSiteSetup.LABEL_USER_REGISTER_FORM_TITLE],
-            'buttom': labels[WebSiteSetup.LABEL_USER_REGISTER_BUTTON],
+            'title': WebSiteSettings.get_text(WebSiteSettings.USER_REGISTRATION_FORM_TITLE_LABEL, app),
+            'button': WebSiteSettings.get_text(WebSiteSettings.USER_REGISTRATION_SUMMIT_BUTTON_LABEL, app),
             'components':user_components
-        },**__get_layout_labels(labels)})
+        },**WebSiteSettings.get_layout_text(app)})
 
     if request.method == 'POST':
         # Remove the group id from the request.
@@ -123,20 +166,25 @@ def item_selection():
     for the registered user. Only know items will be shown while doing
     the comparative judgment comparison.
 
+    Raises:
+        RuntimeError: When the page request methods hasn't been implemented yet.
+
     Returns:
         Response: Redirects to the item selection till al items were
         proccesed. After all items were specify, the method redirects
         to the comparison itself.
     """
     response = __validate_session(session)
+    app = current_app
     if response:
         return response
     
     # The item selection won't be allow if:
     # 1. Manual weights were defined.
     # 2. The user explicitly configured the website to not render this section.
+    render_item_preference = WebSiteSettings.shoud_render(WebSiteSettings.BEHAVIOUR_RENDER_USER_ITEM_PREFERENCE_PAGE, app)
     if not session['weight_conf'] == WebsiteControl.EQUAL_WEIGHT or \
-        not current_app.config['RENDER_USER_ITEM_PREFERENCE']:
+        not render_item_preference:
         return redirect(url_for('.rank'))
     
     if request.method == 'GET':
@@ -164,18 +212,12 @@ def item_selection():
             return redirect(url_for('.rank'))
 
         _, _ , _, item, _ = result
-        # Load the configuration
-        s = WebSiteSetup(current_app)
-        conf = s.load()
-        
-        # Load form labels
-        labels = conf[WebSiteSetup.WEBSITE_CONFIGURATION][WebSiteSetup.WEBSITE_LABEL]
         return render_template('page/item_preference.html', **{**{
             'item':item,
-            'item_selection_question': labels[WebSiteSetup.LABEL_ITEM_SELECTION_QUESTION],
-            'item_selection_answer_no': labels[WebSiteSetup.LABEL_ITEM_SELECTION_NO_BUTTON],
-            'item_selection_answer_yes': labels[WebSiteSetup.LABEL_ITEM_SELECTION_YES_BUTTON]
-        },**__get_layout_labels(labels)})
+            'item_selection_question': WebSiteSettings.get_text(WebSiteSettings.ITEM_SELECTION_QUESTION_LABEL, app),
+            'item_selection_answer_no': WebSiteSettings.get_text(WebSiteSettings.ITEM_SELECTION_NO_BUTTON_LABEL, app),
+            'item_selection_answer_yes': WebSiteSettings.get_text(WebSiteSettings.ITEM_SELECTION_YES_BUTTON_LABEL, app),
+        },**WebSiteSettings.get_layout_text(app)})
     
     if request.method == 'POST':
         response = request.form.to_dict(flat=True)
@@ -204,6 +246,17 @@ def item_selection():
 
 @blueprint.route('/rank', methods=['GET', 'POST'])
 def rank():
+    """Page to rank each of the items being compared.
+
+    Raises:
+        RuntimeError: When the page request methods hasn't been implemented yet.
+        RuntimeError: When there were an error saving the comparison
+        RuntimeError: When the provided comparison id is invalid
+        RuntimeError: When there were an error updating a comparison.
+
+    Returns:
+        Html Content: Render the comparison page.
+    """
     # Available rank actions
     REJUDGE = 'rejudged'
     CONFIRMED = 'confirmed'
@@ -212,14 +265,7 @@ def rank():
     response = __validate_session(session)
     if response:
         return response
-    
-    # Load the configuration
-    s = WebSiteSetup(current_app)
-    conf = s.load()
-    
-    # Load form labels
-    labels = conf[WebSiteSetup.WEBSITE_CONFIGURATION][WebSiteSetup.WEBSITE_LABEL]
-
+    app = current_app
     # Get the items used to make the comparative judgement
     if request.method == 'GET':
         comparison_id = None
@@ -227,16 +273,12 @@ def rank():
         if 'comparison_id' in args:
             comparison_id = args['comparison_id']
 
-        item_1, item_2 = __get_items_to_compare(comparison_id)
+        item_1, item_2 = __get_items_to_compare(app, comparison_id)
         # Show a "no content error" in case of not enought selected known items.
         if item_1 == None or item_2 == None:
             return render_template(
-                '204.html', **__get_layout_labels(labels)
+                '204.html', **WebSiteSettings.get_layout_text(app)
             )
-
-        # Load the configuration
-        s = WebSiteSetup(current_app)
-        conf = s.load()
         
         # The user can rejudge comparisons made if:
         # 1. Some comparison has been made.
@@ -247,21 +289,19 @@ def rank():
         compared, skipped = __get_comparison_stats(session)
 
         # Load form labels
-        labels = conf[WebSiteSetup.WEBSITE_CONFIGURATION][WebSiteSetup.WEBSITE_LABEL]
         return render_template(
             'page/rank.html', **{**{
             'item_1':item_1, 
             'item_2':item_2,
-            'selected_item_label': labels[WebSiteSetup.LABEL_ITEM_SELECTED_LABEL],
-            'tied_selection_label': labels[WebSiteSetup.LABEL_TIED_SELECTION_LABEL],
-            'instruction_label': labels[WebSiteSetup.LABEL_ITEM_INSTRUCTION],
-            'rejudge_label': labels[WebSiteSetup.LABEL_ITEM_REJUDGE_BUTTON],
-            'confirmed_label': labels[WebSiteSetup.LABEL_ITEM_CONFIRMED_BUTTON],
-            'skipped_label': labels[WebSiteSetup.LABEL_ITEM_SKIPPED_BUTTON],
-            'comparison_intruction_label': labels[WebSiteSetup.LABEL_ITEM_INSTRUCTION],
-            'comparison_number_label': labels[WebSiteSetup.LABEL_COMPARISON_NUMBER],
+            'selected_item_label': WebSiteSettings.get_text(WebSiteSettings.RANK_ITEM_SELECTED_INDICATOR_LABEL, app),
+            'tied_selection_label': WebSiteSettings.get_text(WebSiteSettings.RANK_ITEM_TIED_SELECTION_INDICATOR_LABEL, app),
+            'rejudge_label': WebSiteSettings.get_text(WebSiteSettings.RANK_ITEM_REJUDGE_BUTTON_LABEL, app),
+            'confirmed_label': WebSiteSettings.get_text(WebSiteSettings.RANK_ITEM_CONFIRMED_BUTTON_LABEL, app),
+            'skipped_label': WebSiteSettings.get_text(WebSiteSettings.RANK_ITEM_SKIPPED_BUTTON_LABEL, app),
+            'comparison_intruction_label': WebSiteSettings.get_text(WebSiteSettings.RANK_ITEM_INSTRUCTION_LABEL, app),
+            'comparison_number_label': WebSiteSettings.get_text(WebSiteSettings.RANK_ITEM_COMPARISON_EXECUTED_LABEL, app),
             'comparison_number': compared,
-            'skipped_number_label': labels[WebSiteSetup.LABEL_SKIPPED_NUMBER],
+            'skipped_number_label': WebSiteSettings.get_text(WebSiteSettings.RANK_ITEM_SKIPPED_COMPARISON_EXECUTED_LABEL, app),
             'skipped_number': skipped,
             'rejudge_value': REJUDGE,
             'confirmed_value': CONFIRMED,
@@ -269,7 +309,7 @@ def rank():
             'can_redjudge': can_redjudge,
             'comparison_id': comparison_id
             
-        },**__get_layout_labels(labels)})
+        },**WebSiteSettings.get_layout_text(app)})
     
     if request.method == 'POST':
         response = request.form.to_dict(flat=True)
@@ -342,8 +382,14 @@ def rank():
 
 @blueprint.route('/logout')
 def logout():
+    """Logout the user from the platform. Clears the session
+    and redirects the user to the user registration page.
+
+    Returns:
+        _type_: _description_
+    """
     session.clear()
-    return redirect(url_for('.register_user'))
+    return redirect(url_for('.user_registration'))
 
 def __get_comparison_stats(session):
     """Get summary statistics about the comparison made
@@ -373,7 +419,7 @@ def __get_comparison_stats(session):
     return compared, skipped
 
 
-def __get_items_to_compare(comparison_id=None):
+def __get_items_to_compare(app, comparison_id=None):
     """Get the items to compare.
 
     Args:
@@ -385,6 +431,8 @@ def __get_items_to_compare(comparison_id=None):
         Item: Model Item | none
         Item: Model Item | none
     """
+    render_item_preference = WebSiteSettings.shoud_render(WebSiteSettings.BEHAVIOUR_RENDER_USER_ITEM_PREFERENCE_PAGE, app)
+
     # Case 1: Returns the items related to a particular comparison.
     if comparison_id != None:
         # 1. Get the items related to the comparison.
@@ -449,8 +497,7 @@ def __get_items_to_compare(comparison_id=None):
         return items[0], items[1]
     
     # Case 3: Get a random item pair when equal weights and item preference was defined
-    if session['weight_conf'] == WebsiteControl.EQUAL_WEIGHT and \
-        current_app.config['RENDER_USER_ITEM_PREFERENCE']:
+    if session['weight_conf'] == WebsiteControl.EQUAL_WEIGHT and render_item_preference:
         # 1. Get the know user items preferences 
         result = db.session.query(UserItem, Item).\
             join(Item, Item.item_id == UserItem.item_id, isouter = True).\
@@ -476,8 +523,7 @@ def __get_items_to_compare(comparison_id=None):
         return items[selected_items_id[0]], items[selected_items_id[1]] 
             
     # Case 4: Get a random item pair when equal weights and no item preference was defined
-    if session['weight_conf'] == WebsiteControl.EQUAL_WEIGHT and \
-        not current_app.config['RENDER_USER_ITEM_PREFERENCE']:
+    if session['weight_conf'] == WebsiteControl.EQUAL_WEIGHT and not render_item_preference:
         # 1. Get the items related to the user's group preferences
         result = db.session.query(UserGroup, ItemGroup, Item).\
             join(ItemGroup, ItemGroup.group_id == UserGroup.group_id, isouter = True).\
@@ -517,20 +563,5 @@ def __validate_session(session):
     """
 
     if not "user_id" in session or not "group_ids" in session:
-        return redirect(url_for('.register_user'))
+        return redirect(url_for('.user_registration'))
     return None
-
-def __get_layout_labels(labels):
-    """Get the labels used to render the application layout
-
-    Args:
-        labels (json):
-        app (Flask):
-
-    Returns:
-        json: Application labels to be render
-    """
-    return {
-        'logout':labels[WebSiteSetup.LABEL_WEBSITE_LOGOUT],
-        'home_label':labels[WebSiteSetup.LABEL_SITE_HOME_LABEL]
-    }

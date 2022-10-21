@@ -1,16 +1,5 @@
 {% extends "layout.html" %}
-{% block css %}
-<style>
-.fix-submit-mobile {
-  position: fixed;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  z-index: 1030;
-  height: 50px;
-}
-</style>
-{% endblock %}
+{% block title %}{{user_registration_page_title}}{% endblock %}
 {% block content %}
 <div style="margin: 0 auto; max-width:500px;">
     <div class="text-center"><h1>{{title}}</h1></div>
@@ -22,28 +11,12 @@
       {% endfor %}
       <!-- only desktop -->
       <div class="d-none d-md-block d-lg-block d-xl-block col-xl-12 p-1 text-center">
-        <button type="submit" class="btn btn-primary text-center submit">{{buttom}}</button>
+        <button type="submit" class="btn btn-primary text-center submit fix-submit-desktop">{{button}}</button>
       </div>
       <!-- only mobile -->
       <div class="d-block d-md-none d-lg-none d-xl-none col-xl-12 text-center">
-        <button type="submit" class="btn btn-primary text-center submit fix-submit-mobile">{{buttom}}</button>
+        <button type="submit" class="btn btn-primary text-center submit fix-submit-mobile-full">{{button}}</button>
       </div>
     </form>
 </div>
-{% endblock %}
-
-{% block js %}
-<script>
-  function handleData() {
-      // Verify that a group preference was selected by the user
-      var form_data = new FormData(document.querySelector("form"));
-      if(!form_data.has("group_ids")) {
-          document.getElementById("group-selection-error").style.visibility = "visible";
-          return false;
-      }
-      
-      document.getElementById("group-selection-error").style.visibility = "hidden";
-      return true;
-  }
-</script>
 {% endblock %}

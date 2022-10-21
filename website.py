@@ -9,8 +9,8 @@ from datetime import datetime as dt
 from whitenoise import WhiteNoise
 import os
 # Custom libraries
-from configuration.flask import Settings
-from configuration.website import Setup as WebSiteSetup
+from configuration.flask import Settings as FlaskSettings
+from configuration.website import Settings as WebSiteSettings
 from model.connection import db
 from model.schema import WebsiteControl
 import command, view
@@ -29,7 +29,7 @@ def create_app(test_config=None):
         static_folder="static"
     )
     if test_config is None:
-        app.config.from_object(Settings)
+        app.config.from_object(FlaskSettings)
     else:
         # load the test config if passed in
         app.config.from_mapping(test_config)
@@ -68,24 +68,25 @@ def validate_app_itegrity():
     execution during runtime. Modification on this files can cause unexpected results.
     """
     app = current_app
+    config_modification_date = None
     with app.app_context():
-        # Get the date when the setup was executed
-        w = WebsiteControl()
-        conf = w.get_conf()
-        setup_exec_date = conf.setup_exec_date
-        config_modification_date = None
-
         try:
+            # Get the application control variables
+            w = WebsiteControl()
+            conf = w.get_conf()
+
+            WebSiteSettings.set_configuration_location(app, conf.configuration_file)
+            setup_exec_date = conf.setup_exec_date
+
             # Get the last modification date of the configuration file (UTC)
-            config_modification_date = os.path.getmtime(Settings.WEBSITE_SETUP_LOCATION)
+            config_modification_date = os.path.getmtime(WebSiteSettings.get_configuration_location(app))
             config_modification_date = dt.utcfromtimestamp(config_modification_date)
         except Exception as e:
-            app.logger.critical(e)
-            exit()
-        
+            raise RuntimeError("Application not initialized yet. Plase read the README.md file.")
+
         # Stop the server execution if the configuration file was modified after the
         # setup of the application was executed.
-        if config_modification_date > setup_exec_date:
+        if config_modification_date == None or config_modification_date > setup_exec_date:
             app.logger.critical("Configuration file cannot be modified after the website "
                                 "setup. Modified on: %s UTC. Setup executed on : %s UTC. "
                                 "Please execute >Flask setup< again." 
@@ -96,32 +97,13 @@ def validate_app_itegrity():
                                "Please contact the website administrator.")
 
 def page_not_found(e):
-    
-    # Load the configuration
-    s = WebSiteSetup(current_app)
-    conf = s.load()
-    
-    # Load form labels
-    labels = conf[WebSiteSetup.WEBSITE_CONFIGURATION][WebSiteSetup.WEBSITE_LABEL]
-
-    # note that we set the 404 status explicitly
-    return render_template('404.html', **{
-        'logout':labels[WebSiteSetup.LABEL_WEBSITE_LOGOUT]
-    }), 404
+    """Return 404 page"""
+    return render_template('404.html', **WebSiteSettings.get_layout_text(current_app)), 404
     
     
 def page_unexpected_condition(e):
-    # Load the configuration
-    s = WebSiteSetup(current_app)
-    conf = s.load()
-    
-    # Load form labels
-    labels = conf[WebSiteSetup.WEBSITE_CONFIGURATION][WebSiteSetup.WEBSITE_LABEL]
-
-    # note that we set the 404 status explicitly
-    return render_template('500.html', **{
-        'logout':labels[WebSiteSetup.LABEL_WEBSITE_LOGOUT]
-    }), 500
+    """Return 500 page"""
+    return render_template('500.html', **WebSiteSettings.get_layout_text(current_app)), 500
 
 # Create the Flask application
 app = create_app()

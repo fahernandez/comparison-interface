@@ -4,5 +4,3 @@ data/
 .idea
 .vscode/
 tmp/
-model/database.db
-model/database.xlsx

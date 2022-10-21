@@ -1,0 +1,176 @@
+{
+    "behaviorConfiguration": {
+        "exportPathLocation":"tmp/export.xlsx",
+        "renderUserItemPreferencePage": "true",
+        "renderUserInstructionPage": "true",
+        "renderEthicsAgreementPage": "true",
+        "userInstructionLink": "https://docs.google.com/document/d/e/2PACX-1vT2yGXStletU0XGL6DaA45tSr3skJLIi2u-m5T9t3gNEjjXdN__c4yJhhN0CyzuDsFltKUFfBDt2qEJ/pub?embedded=true",
+        "userEthicsAgreementLink": "https://docs.google.com/document/d/e/2PACX-1vT2yGXStletU0XGL6DaA45tSr3skJLIi2u-m5T9t3gNEjjXdN__c4yJhhN0CyzuDsFltKUFfBDt2qEJ/pub?embedded=true"
+    },
+    "comparisonConfiguration" : {
+        "weightConfiguration": "manual",
+        "groups": [
+            {
+                "name": "wales_scotland_northern_irland",
+                "displayName": "Wales, Scotland, Nothern Ireland",
+                "items":[
+                    {
+                        "name": "wales",
+                        "displayName": "Wales",
+                        "imageName": "item_10.png"
+                    },
+                    {
+                        "name": "scotland",
+                        "displayName": "Scotland",
+                        "imageName": "item_11.png"
+                    },
+                    {
+                        "name": "northern_ireland",
+                        "displayName": "Northern Ireland",
+                        "imageName": "item_12.png"
+                    }
+                ],
+                "weight":[
+                    {
+                        "item_1": "wales",
+                        "item_2": "scotland",
+                        "weight":0.2
+                    },
+                    {
+                        "item_1": "wales",
+                        "item_2": "northern_ireland",
+                        "weight":0.3
+                    },
+                    {
+                        "item_1": "scotland",
+                        "item_2": "northern_ireland",
+                        "weight":0.5
+                    }
+                ]
+            },
+            {
+                "name": "england_east",
+                "displayName": "East of England",
+                "items":[
+                    {
+                        "name": "wales",
+                        "displayName": "Wales",
+                        "imageName": "item_10.png"
+                    },
+                    {
+                        "name": "yorshire",
+                        "displayName": "Yorshire & Humberside",
+                        "imageName": "item_3.png"
+                    },
+                    {
+                        "name": "east_midlands",
+                        "displayName": "East Midlands",
+                        "imageName": "item_4.png"
+                    },
+                    {
+                        "name": "eastern",
+                        "displayName": "Eastern",
+                        "imageName": "item_6.png"
+                    }
+                ],
+                "weight":[
+                    {
+                        "item_1": "wales",
+                        "item_2": "yorshire",
+                        "weight":0.1
+                    },
+                    {
+                        "item_1": "wales",
+                        "item_2": "east_midlands",
+                        "weight":0.2
+                    },
+                    {
+                        "item_1": "wales",
+                        "item_2": "eastern",
+                        "weight":0.2
+                    },
+                    {
+                        "item_1": "yorshire",
+                        "item_2": "east_midlands",
+                        "weight":0.3
+                    },
+                    {
+                        "item_1": "yorshire",
+                        "item_2": "eastern",
+                        "weight":0.1
+                    },
+                    {
+                        "item_1": "east_midlands",
+                        "item_2": "eastern",
+                        "weight":0.1
+                    }
+                ]
+            }
+        ]
+    },
+    "websiteTextConfiguration":  {
+        "websiteTitle": "Comparison Software",
+        "pageTitleLogout": "Logout",
+        "pageTitleUserRegistration": "User Registration",
+        "pageTitleEthicsAgreement": "Ethics Agreement",
+        "pageTitleIntroduction": "Introduction",
+        "pageTitleItemPreference": "Item Preference Selection",
+        "pageTitleRank": "Items Rank",
+        "userRegistrationGroupQuestionLabel": "Which of these boroughs are you familiar with?",
+        "userRegistrationFormTitleLabel": "Register",
+        "userRegistrationSummitButtonLabel": "Register",
+        "userRegistrationGroupSelectionErr": "Please select at least one area.",
+        "userRegistrationEthicsAgreementLabel": "I confirm that I have read the privacy notice and consent to taking part in this survey.",
+        "itemSelectionQuestionLabel": "Do you know the region",
+        "itemSelectionYesButtonLabel": "Yes",
+        "itemSelectionNoButtonLabel": "No",
+        "itemSelectedIndicatorLabel": "HIGHER",
+        "rankItemTiedSelectionIndicatorLabel": "EQUAL",
+        "rankItemItemRejudgeButtonLabel": "Previous",
+        "rankItemConfirmedButtonLabel": "Confirm",
+        "rankItemSkippedButtonLabel": "Skip",
+        "rankItemInstructionLabel": "Click the region that has the higher rate of FGM, then click on the blue confirm button.",
+        "rankItemComparisonExecutedLabel": "Compared",
+        "rankItemSkippedComparisonExecutedLabel": "Skipped",
+        "introductionContinueButtonLabel": "Continue",
+        "ethicsAgreementBackButtonLabel": "Back"
+    },
+    "userFieldsConfiguration": [
+        {
+            "name": "name",
+            "displayName": "First Name",
+            "type": "text",
+            "maxLimit": 250,
+            "required": "true"
+        },
+        {
+            "name": "gender",
+            "displayName": "Gender",
+            "type": "radio",
+            "option": ["Male", "Female", "Other", "Prefer not to say"],
+            "required": "true"
+        },
+        {
+            "name": "allergies",
+            "displayName": "Allergies",
+            "type": "dropdown",
+            "option": ["Yes", "No"],
+            "required": "true"
+        },
+        {
+            "name": "age",
+            "displayName": "Age in years",
+            "type": "int",
+            "maxLimit": 250,
+            "minLimit": "10",
+            "required": "true"
+        },
+        {
+            "name": "email",
+            "displayName": "Email",
+            "type": "email",
+            "maxLimit": 250,
+            "required": "true"
+        }
+    ]
+}

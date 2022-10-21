@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+{% block title %}{{ethics_agreement_page_title}}{% endblock %}
+{% block content %}
+<div>
+    <div class="full-height-iframe">
+        <iframe style="height:100%;width:100%;" scrolling="yes" class="embed-responsive" src="{{ethics_agreement_link}}"></iframe>
+    </div>
+    <form action="{{ url_for('.user_registration') }}">
+        <!-- only desktop -->
+        <div class="d-none d-md-block d-lg-block d-xl-block col-xl-12 p-1 text-center">
+            <button type="submit" class="btn btn-primary text-center submit fix-submit-desktop">{{ethics_agreement_back_button}}</button>
+        </div>
+        <!-- only mobile -->
+        <div class="d-block d-md-none d-lg-none d-xl-none col-xl-12 text-center">
+            <button type="submit" class="btn btn-primary text-center submit fix-submit-mobile-full">{{ethics_agreement_back_button}}</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

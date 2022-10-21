@@ -207,6 +207,7 @@ class WebsiteControl(db.Model, BaseModel):
 
     website_control_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     weight_configuration = db.Column(db.String(20), nullable=False)
+    configuration_file = db.Column(db.String(500), nullable=False)
     setup_exec_date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     
     def get_conf(self):
