@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+{% block title %}{{item_preference_page_title}}{% endblock %}
+{% block content %}
+<div class="container-narrow text-center p-4">
+  <h4>{{item_selection_question}}&nbsp;<b>{{ item.display_name }}</b>?</h4>
+  <div class="col-xl-12 p-4 text-center">
+    <img id="left-image" src= {{ url_for('static', filename = 'image/' + item.image_path|string) }} class="img-responsive pt-2" style="width:100%;max-width:600px; height:100%;max-height:600px;">  
+  </div>
+  <div class="p-2">
+    <form method = "POST">
+      <div class="form-group">
+        <input type="hidden" id="item_id" name="item_id" value="{{item.item_id}}">
+        <!-- only desktop -->
+        <div class="d-none d-md-block d-lg-block d-xl-block row pl-2 pr-2">
+          <div class="control-block-larger col p-2 text-right">
+            <button type="submit" name='action' value='agree' style="width:200px;margin:5px" class="btn btn-success btn-lg submit">{{item_selection_answer_yes}}</button>
+          </div>
+          <div class="control-block-larger col p-2 text-left">
+            <button type="submit" name='action' value='disagree' style="min-width:200px;margin:5px" class="btn btn-danger btn-lg submit">{{item_selection_answer_no}}</button>
+          </div>
+        </div>
+        <!-- only mobile -->
+        <div class="d-block d-md-none d-lg-none d-xl-none row pl-2 pr-2 fix-control-mobile-share">
+          <div class="control-block-larger col p-1 text-right">
+            <button type="submit" name='action' value='agree' style="width:100%" class="btn btn-success btn-lg submit">{{item_selection_answer_yes}}</button>
+          </div>
+          <div class="control-block-larger col p-1 text-left">
+            <button type="submit" name='action' value='disagree' style="width:100%" class="btn btn-danger btn-lg submit">{{item_selection_answer_no}}</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

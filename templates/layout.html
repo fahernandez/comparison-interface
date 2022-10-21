@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../../../favicon.ico">
+
+    <title>{{ website_title }}{% block title %}{% endblock %}</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/custom-style.css') }}">
+    {% block css %}{% endblock %}
+    
+  </head>
+
+  <body>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+      <a class="navbar-brand" href="#">{{ website_title }}</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+        <ul class="navbar-nav ml-auto">
+          {% if render_user_instructions %}
+          <li class="nav-item active">
+            <a class="nav-link" href="{{ url_for('views.introduction') }}">{{introduction_page_title}}</a>
+          </li>
+          {% endif %}
+          {% if render_user_ethics_agreement %}
+          <li class="nav-item active">
+            <a class="nav-link" href="{{ url_for('views.ethics_agreement') }}">{{ethics_agreement_page_title}}</a>
+          </li>
+          {% endif %}
+          <li class="nav-item active">
+            <a class="nav-link" href="{{ url_for('views.logout') }}">{{logout_page_title}}</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    
+    <div id="content">{% block content %}{% endblock %}</div>
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="{{ url_for('static', filename='js/jquery-3.3.1.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.zoom.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/src/iframe-change.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/src/user-registry-validation.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/src/rank-control.js') }}"></script>
+    {% block js %}{% endblock %}
+  </body>
+</html>

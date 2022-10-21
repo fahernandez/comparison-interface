@@ -94,12 +94,18 @@ If you have run out of energy or time for your project, put a note at the top of
 # Useful commans
 ```
 pip3 list --format=freeze > requirements.txt
-export FLASK_ENV=development;
+export FLASK_DEBUG=true;
 export FLASK_APP=website;
 heroku ps:copy ~/model/database.xlsx
+flask --app website run
 heroku run bash;FLASK_APP=website;flask export;
 conda activate BSBT-Interface
 git push heroku main
 heroku logs  -f
-
+git remote remove fahernandez
+git remote add fahernandez git@github.com:fahernandez/comparison-interface.git
+du -hs /tmp ~/.[!.]* ~/* | sort -h
+rm -rf /tmp/* /tmp/.*
+https://help.pythonanywhere.com/pages/Virtualenvs
+/home/fahernandez/.virtualenvs/comparative-interface
 ```

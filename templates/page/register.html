@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% block title %}{{user_registration_page_title}}{% endblock %}
+{% block content %}
+<div style="margin: 0 auto; max-width:500px;">
+    <div class="text-center"><h1>{{title}}</h1></div>
+    <br/>
+    <form method = "POST" onsubmit="return handleData()">
+      <div class="form-group p-3">
+      {% for component in components %}
+        {{component|safe}}
+      {% endfor %}
+      <!-- only desktop -->
+      <div class="d-none d-md-block d-lg-block d-xl-block col-xl-12 p-1 text-center">
+        <button type="submit" class="btn btn-primary text-center submit fix-submit-desktop">{{button}}</button>
+      </div>
+      <!-- only mobile -->
+      <div class="d-block d-md-none d-lg-none d-xl-none col-xl-12 text-center">
+        <button type="submit" class="btn btn-primary text-center submit fix-submit-mobile-full">{{button}}</button>
+      </div>
+    </form>
+</div>
+{% endblock %}
