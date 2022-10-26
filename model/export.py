@@ -7,8 +7,6 @@ import pandas as pd
 from sqlalchemy import MetaData
 from migrate.versioning.schema import Table
 from sqlalchemy import text
-from sqlalchemy.sql import select
-import os
 
 
 class Export:
@@ -36,15 +34,15 @@ class Export:
                 data = m.query.all()
                 data_list = [item.as_dict() for item in data]
                 df = pd.DataFrame(data_list)
-                df.to_excel(writer,m.__tablename__,index=False)
-        
+                df.to_excel(writer, m.__tablename__, index=False)
+
             # The user model needs to be accessed manually due the dynamics fields
             db_engine = db.get_engine()
             db_meta = MetaData(bind=db_engine)
             MetaData.reflect(db_meta)
-            table = Table('user' , db_meta)
+            table = Table('user', db_meta)
             columns = table.columns.keys()
-            
+
             # Get all columns from the table
             sql = text("select {} from user;".format(', '.join(columns)))
             results = db_engine.execute(sql)
@@ -54,4 +52,4 @@ class Export:
                 df = pd.concat([df, row], ignore_index=True)
 
             # Write the user results
-            df.to_excel(writer,'user',index=False)
+            df.to_excel(writer, 'user', index=False)

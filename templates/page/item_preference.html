@@ -4,10 +4,10 @@
 <div class="container-narrow text-center p-4">
   <h4>{{item_selection_question}}&nbsp;<b>{{ item.display_name }}</b>?</h4>
   <div class="col-xl-12 p-4 text-center">
-    <img id="left-image" src= {{ url_for('static', filename = 'image/' + item.image_path|string) }} class="img-responsive pt-2" style="width:100%;max-width:600px; height:100%;max-height:600px;">  
+    <img id="left-image" src= {{ url_for('static', filename = 'image/' + item.image_path|string) }} class="img-responsive pt-2" style="width:100%;max-width:600px; height:100%;max-height:600px;">
   </div>
   <div class="p-2">
-    <form method = "POST">
+    <form method = "POST" id="operational">
       <div class="form-group">
         <input type="hidden" id="item_id" name="item_id" value="{{item.item_id}}">
         <!-- only desktop -->

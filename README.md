@@ -1,111 +1,99 @@
+[![pipeline status](https://gitlab.bham.ac.uk/seymourg-bsbt/comparison-interface/badges/main/pipeline.svg)](https://gitlab.bham.ac.uk/seymourg-bsbt/comparison-interface/-/commits/main)
+
+[![coverage report](https://gitlab.bham.ac.uk/seymourg-bsbt/comparison-interface/badges/main/coverage.svg)](https://gitlab.bham.ac.uk/seymourg-bsbt/comparison-interface/-/commits/main)
+
+[![Latest Release](https://gitlab.bham.ac.uk/seymourg-bsbt/comparison-interface/-/badges/release.svg)](https://gitlab.bham.ac.uk/seymourg-bsbt/comparison-interface/-/releases)
+
 # Comparison Interface
+This repository provides a web interface to facilitate the collection of comparative judgement. In only a couple of minutes, it lets you deploy a web interface to collect comparative judgement by simply requiring items images (i.e. to be compared) as input. The results can be exported to an excel file which can then be directly processed using the BSBT package to obtain a ranking. There is not restriction on the item's nature but the software has been used previously  on geospatial datasets to be processed with the Bayesian Spatial Bradley--Terry model BSBT - https://github.com/rowlandseymour/BSBT).
+
+## Terms
+* ***judge***: Person who makes the comparison between items.
+* ***groups***: Item's natural clustering.
+
+## Software main characteristics.
+1. The entire text of the website can be changed from a single configuration point.
+2. Custom weights can be defined for the items pairs.
+3. Multiple items group can be defined to respond for judges acuate knowledge.
+3. Instructions can be written/formatted in Google docs and then render in the website keeping the original look and feel. (This is an optional section)
+4. Ethics agreement can be written/formatted in Google docs and then render in the website keeping the original look and feel. (This is an optional section)
+5. Ethics agreement can be configured to be mandatory before making the item's comparison. (This is an optional feature)
+6. Custom fields can be configured to be required when the judge is registering on the website.
+7. The entire database can be dump to an excel file.
 
 
+## Quick Set-up
+This sequence of commands will allow you visualize one of the pre-configured examples.
 
-## Getting started
+### Prerequisites
+1. You are using a Linux or Mac computer.
+2. python > 3.8.0 is already installed in your computer.
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
-
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
-
+### Set-up Steps
+1. Open a terminal console an run these commands.
+```bash
+pip3 install -r requirements.txt
+flask --app website --debug setup example/config-equal-item-weights.json
+flask --app website --debug run --host=0.0.0.0 --port=5001
 ```
-cd existing_repo
-git remote add origin https://gitlab.bham.ac.uk/seymourg-bsbt/comparison-interface.git
-git branch -M main
-git push -uf origin main
+2. Navigate in you preferred navigation browser to http://127.0.0.1:5001
+3. (optional) Try a different configuration example.
+```bash
+flask --app website --debug reset example/config-custom-item-weights.json
+flask --app website --debug run --host=0.0.0.0 --port=5002
 ```
+4. (optional) Navigate in you preferred navigation browser to http://127.0.0.1:5002
+5. (optional) Export the information to an excel file.
+```bash
+flask --app website --debug export
+```
+6. (optional) The information is exported on instance/export.xls
 
-## Integrate with your tools
 
-- [ ] [Set up project integrations](https://gitlab.bham.ac.uk/seymourg-bsbt/comparison-interface/-/settings/integrations)
+## Custom Set-up
+Follow the next step to make a custom configuration of the project.
 
-## Collaborate with your team
+### Requirements
+1. The images of the items being compared.
+    * These images must be at least 300x300 pixels.
+    * The name of the images cannot be repeated.
+    * Valid images format accepted: png, jpg or jpeg,
+2. Create a custom configuration file.
+    * Refer to ***example/config-equal-item-weights.json*** to configure a scenario when the weight of the items being compared at the same.
+    * Refer to ***example/config-custom-item-weights.json*** to configure a scenario when the weight of the items being compared at the same.
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Automatically merge when pipeline succeeds](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+### Steps
+1. Delete the content of the folder ***static/image*** and copy inside your images.
+2. Copy your configuration file to the folder ***example/***.
+3. Open a terminal console an run these commands.
+```bash
+pip3 install -r requirements.txt
+flask --app website --debug setup example/{the_name_of_your_configuration_file}.json
+flask --app website --debug run --host=0.0.0.0 --port=5001
+```
+4. (optional) Export the information to an excel file.
+```bash
+flask --app website --debug export
+```
+5. (optional) The information is exported on ***instance/export.xls***
 
-## Test and Deploy
-
-Use the built-in continuous integration in GitLab.
-
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
-
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+### Troubleshooting
+1. The configuration file requires an specific format. Try to follow one of the examples supplied with this project to avoid unexpected problems.
+2. When running the ***setup*** command, the software validates the format of the configuration file. These messages will guide you on the issues being introduced.
 
 ## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+For support, send an email to [fabian.hnz@gmail.com](mailto:fabian.hnz@gmail.com). I try to review the email everyday.
 
 ## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+We welcome any contribution to the project. Please refer to .gitlab-ci.yml for details on the project's linter and test standards.
 
 ## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+* Bertrand Perrat, The University of Nottingham: V1 main project contributor.
+* Fabián Hernández, The University of Nottingham: V2 main project contributor.
+* Rowland Seymour, The university of birmingham: Project's director.
 
 ## License
-For open source projects, say how it is licensed.
+<!--- https://gist.github.com/lukas-h/2a5d00690736b4c3a7ba -->
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
 
-# Useful commans
-```
-pip3 list --format=freeze > requirements.txt
-export FLASK_DEBUG=true;
-export FLASK_APP=website;
-heroku ps:copy ~/model/database.xlsx
-flask --app website run
-heroku run bash;FLASK_APP=website;flask export;
-conda activate BSBT-Interface
-git push heroku main
-heroku logs  -f
-git remote remove fahernandez
-git remote add fahernandez git@github.com:fahernandez/comparison-interface.git
-du -hs /tmp ~/.[!.]* ~/* | sort -h
-rm -rf /tmp/* /tmp/.*
-https://help.pythonanywhere.com/pages/Virtualenvs
-/home/fahernandez/.virtualenvs/comparative-interface
-```

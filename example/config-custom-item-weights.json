@@ -1,7 +1,7 @@
 {
     "behaviorConfiguration": {
-        "exportPathLocation":"tmp/export.xlsx",
-        "renderUserItemPreferencePage": "true",
+        "exportPathLocation": "instance/export.xlsx",
+        "renderUserItemPreferencePage": "false",
         "renderUserInstructionPage": "true",
         "renderEthicsAgreementPage": "true",
         "userInstructionLink": "https://docs.google.com/document/d/e/2PACX-1vT2yGXStletU0XGL6DaA45tSr3skJLIi2u-m5T9t3gNEjjXdN__c4yJhhN0CyzuDsFltKUFfBDt2qEJ/pub?embedded=true",
@@ -37,8 +37,8 @@
                         "weight":0.2
                     },
                     {
-                        "item_1": "wales",
-                        "item_2": "northern_ireland",
+                        "item_1": "northern_ireland",
+                        "item_2": "wales",
                         "weight":0.3
                     },
                     {
@@ -162,7 +162,7 @@
             "displayName": "Age in years",
             "type": "int",
             "maxLimit": 250,
-            "minLimit": "10",
+            "minLimit": 10,
             "required": "true"
         },
         {

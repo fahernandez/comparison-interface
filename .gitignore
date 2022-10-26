@@ -1,6 +1,14 @@
 __pycache__/
 website/__pycache__/
-data/
+configuration/__pycache__/
+model/__pycache__/
+test/__pycache__/
+view/__pycache__/
 .idea
 .vscode/
-tmp/
+.pytest_cache
+instance/
+data/
+htmlcov/
+coverage.xml
+.coverage
