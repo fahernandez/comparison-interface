@@ -19,6 +19,7 @@ import contextily as ctx
 import matplotlib.pyplot as plt
 from tqdm.contrib.concurrent import process_map
 
+
 def load_shapefile(args):
     """Load the shapefile used to extract the images used on the comparative judgement procedure.
 
@@ -35,7 +36,7 @@ def load_shapefile(args):
     except Exception as e:
         print(e)
         exit()
-        
+
     # Identify geometry column which must exists and be unique
     col_geom = df.select_dtypes(include=['geometry']).columns
     assert len(col_geom) == 1
@@ -43,7 +44,7 @@ def load_shapefile(args):
 
     # Choose ID column
     print(
-        '\nYou need to choose a column as unique identifier of your items, potential candidates are:'
+        '\nChoose a column as unique identifier of your items:'
     )
     col_idx = None
     while col_idx is None:
@@ -59,6 +60,7 @@ def load_shapefile(args):
     df.index = df.index + 1
 
     return df[['chosen_id', col_geom]]
+
 
 def choose_column(df):
     """Select candidates columns from the shp files to use as items descriptors.
@@ -86,10 +88,11 @@ def choose_column(df):
     try:
         choice = id_candidates[int(choice)]
         return choice
-    except:
+    except Exception:
         print('Invalid choice')
 
     return None
+
 
 def generate_item_images(df_row):
     """Generate the images used on the comparative judgement from the shapefile.
@@ -130,6 +133,7 @@ def generate_item_images(df_row):
 
     plt.close(fig)
 
+
 def get_image_path():
     """Return the absolute path of the image folder
 
@@ -138,10 +142,10 @@ def get_image_path():
     """
     return os.path.abspath(os.path.dirname(__file__)) + "/../static/image"
 
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description=
-        'Create images from a Shapefile containing the items of interest'
+        description='Create images from a Shapefile containing the items of interest'
     )
     # Positional arguments
     parser.add_argument('shapefile',
@@ -169,4 +173,3 @@ if __name__ == '__main__':
     process_map(generate_item_images, items)
 
     # TODO Check all images were properly generated, maybe a simple file count?
-

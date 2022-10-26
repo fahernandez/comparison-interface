@@ -5,7 +5,8 @@ function handleData() {
         document.getElementById("group-selection-error").style.visibility = "visible";
         return false;
     }
-    
+
+    document.querySelector(".submit").disabled = true
     document.getElementById("group-selection-error").style.visibility = "hidden";
     return true;
 }

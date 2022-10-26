@@ -5,7 +5,7 @@
     <div class="full-height-iframe">
         <iframe style="height:100%;width:100%;" scrolling="yes" class="embed-responsive" src="{{user_instruction_link}}"></iframe>
     </div>
-    <form action="{{ url_for('.user_registration') }}">
+    <form action="{{ url_for('.user_registration') }}" id="operational">
         <!-- only desktop -->
         <div class="d-none d-md-block d-lg-block d-xl-block col-xl-12 p-1 text-center">
             <button type="submit" class="btn btn-primary text-center submit fix-submit-desktop">{{introduction_continue_button}}</button>

@@ -1,6 +1,6 @@
 {
     "behaviorConfiguration": {
-        "exportPathLocation":"tmp/export.xlsx",
+        "exportPathLocation":"instance/export.xlsx",
         "renderUserItemPreferencePage": "true",
         "renderUserInstructionPage": "true",
         "renderEthicsAgreementPage": "true",
@@ -59,7 +59,7 @@
                         "displayName": "South West",
                         "imageName": "item_9.png"
                     }
-                ] 
+                ]
             },
             {
                 "name": "wales_scotland_northern_irland",
@@ -80,7 +80,7 @@
                         "displayName": "Northern Ireland",
                         "imageName": "item_12.png"
                     }
-                ] 
+                ]
             }
         ]
     },
@@ -111,7 +111,7 @@
             "displayName": "Age in years",
             "type": "int",
             "maxLimit": 250,
-            "minLimit": "10",
+            "minLimit": 10,
             "required": "true"
         },
         {

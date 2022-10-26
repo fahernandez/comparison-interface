@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="container-fluid">
-  <form method = "POST">
+  <form method = "POST" id="operational">
     <input type="hidden" id="selected_item_indicator" name="selected_item_indicator" value="{{selected_item_label}}">
     <input type="hidden" id="tied_items_indicator" name="tied_items_indicator" value="{{tied_selection_label}}">
     <input type="hidden" id="selected_item_id" name="selected_item_id" value="">
@@ -12,10 +12,10 @@
     <div class="form-group">
       <div class="text-center">
            <!-- only desktop -->
-          <h3 class="d-none d-md-block d-lg-block d-xl-block">{{comparison_intruction_label}}</h3>
+          <h3 class="d-none d-md-block d-lg-block d-xl-block">{{comparison_instruction_label}}</h3>
           <h4 style="font-weight: bold" class="d-none d-md-block d-lg-block d-xl-block">{{comparison_number_label}}:&nbsp;{{comparison_number}}.&nbsp;{{skipped_number_label}}:&nbsp;{{skipped_number}}</h3>
           <!-- only mobile -->
-          <h5 class="d-block d-md-none d-lg-none d-xl-none">{{comparison_intruction_label}}</h5>
+          <h5 class="d-block d-md-none d-lg-none d-xl-none">{{comparison_instruction_label}}</h5>
           <h6 style="font-weight: bold" class="d-block d-md-none d-lg-none d-xl-none">{{comparison_number_label}}:&nbsp;{{comparison_number}}.&nbsp;{{skipped_number_label}}:&nbsp;{{skipped_number}}</h5>
         </div>
       <div class="row pl-2 pr-2">
@@ -45,7 +45,7 @@
       <!-- only desktop -->
       <div class="d-none d-md-block d-lg-block d-xl-block row pl-2 pr-2">
         <div class="control-block-shorter col p-2 text-right">
-          <button id="previous-button" type="submit" name='state' value='{{rejudge_value}}' style="width:200px" class="btn btn-lg btn-secondary {% if can_redjudge %}{% else %}disabled{% endif %}" {% if can_redjudge %}{% else %}disabled{% endif %}>{{rejudge_label}}</button>
+          <button id="previous-button" type="submit" name='state' value='{{rejudge_value}}' style="width:200px" class="btn btn-lg btn-secondary {% if can_rejudge %}{% else %}disabled{% endif %}" {% if can_rejudge %}{% else %}disabled{% endif %}>{{rejudge_label}}</button>
         </div>
         <div class="control-block-shorter col p-2 text-center">
           <button id="confirm-button-d" type="submit" name='state' value='{{confirmed_value}}' style="width:200px" class="btn btn-lg btn-primary disabled" disabled>{{confirmed_label}}</button>
@@ -57,7 +57,7 @@
       <!-- only mobile -->
       <div class="d-block d-md-none d-lg-none d-xl-none row pl-2 pr-2 fix-control-mobile-share">
         <div class="control-block-shorter col p-2 text-right">
-          <button id="previous-button" type="submit" name='state' value='{{rejudge_value}}' style="min-width:100px" class="btn btn-lg btn-secondary {% if can_redjudge %}{% else %}disabled{% endif %}" {% if can_redjudge %}{% else %}disabled{% endif %}>{{rejudge_label}}</button>
+          <button id="previous-button" type="submit" name='state' value='{{rejudge_value}}' style="min-width:100px" class="btn btn-lg btn-secondary {% if can_rejudge %}{% else %}disabled{% endif %}" {% if can_rejudge %}{% else %}disabled{% endif %}>{{rejudge_label}}</button>
         </div>
         <div class="control-block-shorter col p-2 text-center">
           <button id="confirm-button-m" type="submit" name='state' value='{{confirmed_value}}' style="min-width:100px" class="btn btn-lg btn-primary disabled" disabled>{{confirmed_label}}</button>
